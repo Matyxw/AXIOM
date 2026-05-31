@@ -1,0 +1,8 @@
+# Forzar LF en todos los archivos — obligatorio para que Nix Flakes
+# pueda hashear los archivos correctamente en sistemas mixtos Windows/Linux.
+* text=auto eol=lf
+
+# Binarios — sin conversión de line endings
+*.png  binary
+*.jpg  binary
+*.wasm binary
