@@ -21,11 +21,13 @@
         };
 
         # ---------------------------------------------------------------
-        # Toolchain fijo: Rust 1.79.0, edición 2021 habilitada por defecto
+        # Toolchain fijo: Rust 1.87.0
+        # Mínimo requerido: 1.85.0 (estabiliza edition2024 en Cargo,
+        # necesario para compilar hashbrown 0.17+ y reqwest 0.12 moderno).
         # Extensiones de desarrollo incluidas: rust-src (para LSP/rust-analyzer),
         # rustfmt (formato) y clippy (linting).
         # ---------------------------------------------------------------
-        rustToolchain = pkgs.rust-bin.stable."1.79.0".default.override {
+        rustToolchain = pkgs.rust-bin.stable."1.87.0".default.override {
           extensions = [
             "rust-src"   # Requerido por rust-analyzer
             "rustfmt"    # Formateo de código

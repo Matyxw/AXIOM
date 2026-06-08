@@ -1,0 +1,10 @@
+{
+  "models": {
+    "claude-sonnet-4-6-thinking": {
+      "thinkingConfig": {
+        "enabled": true,
+        "thinkingBudget": 32768
+      }
+    }
+  }
+}

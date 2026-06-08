@@ -14,3 +14,4 @@
 # Env local
 .env
 .env.local
+.env
