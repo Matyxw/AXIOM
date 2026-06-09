@@ -27,7 +27,7 @@
         # Extensiones de desarrollo incluidas: rust-src (para LSP/rust-analyzer),
         # rustfmt (formato) y clippy (linting).
         # ---------------------------------------------------------------
-        rustToolchain = pkgs.rust-bin.stable."1.87.0".default.override {
+        rustToolchain = pkgs.rust-bin.stable."1.89.0".default.override {
           extensions = [
             "rust-src"   # Requerido por rust-analyzer
             "rustfmt"    # Formateo de código
