@@ -27,7 +27,6 @@
       ]
     }
   },
-  "onCreateCommand": "nix flake check || true",
   "postCreateCommand": "bash -c 'sudo apt-get update && sudo apt-get install -y direnv && echo \"eval \\\"\\$(direnv hook bash)\\\"\" >> ~/.bashrc && echo \"eval \\\"\\$(direnv hook zsh)\\\"\" >> ~/.zshrc && direnv allow .'",
   "remoteUser": "vscode"
 }
