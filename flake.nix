@@ -48,6 +48,7 @@
           pkg-config     # Resolución de bibliotecas del sistema
           clang          # Compilador C/C++ alternativo (preferido por bindgen)
           llvmPackages.libclang  # Headers de libclang para bindgen
+          nodejs_22      # Entorno de ejecución para Frontend (Next.js)
         ];
 
         buildInputs = with pkgs; [
@@ -100,15 +101,16 @@
           shellHook = ''
             echo ""
             echo "╔═══════════════════════════════════════════════════════╗"
-            echo "║   Bot IA Backend — Entorno Nix activado               ║"
-            echo "║   Rust $(rustc --version | cut -d' ' -f2)  •  Edición 2021                   ║"
+            echo "║   AXIOM — Entorno Nix Full-Stack Activado             ║"
+            echo "║   Rust $(rustc --version | cut -d' ' -f2)  •  Node $(node --version)                    ║"
             echo "╚═══════════════════════════════════════════════════════╝"
             echo ""
+            echo "  [Backend]"
             echo "  cargo build   → compilar"
-            echo "  cargo run     → compilar y ejecutar"
-            echo "  cargo test    → ejecutar tests"
-            echo "  cargo clippy  → linting"
-            echo "  cargo fmt     → formatear código"
+            echo "  cargo run     → compilar y ejecutar (Puerto 3001)"
+            echo ""
+            echo "  [Frontend]"
+            echo "  cd frontend && npm run dev  → Levantar Next.js (Puerto 3000)"
             echo ""
           '';
         };
