@@ -15,6 +15,3 @@
 .env
 .env.local
 .env
-
-# Entorno Nix
-.direnv/
