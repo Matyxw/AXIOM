@@ -49,6 +49,7 @@
           clang          # Compilador C/C++ alternativo (preferido por bindgen)
           llvmPackages.libclang  # Headers de libclang para bindgen
           nodejs_22      # Entorno de ejecución para Frontend (Next.js)
+          nil            # Nix Language Server
         ];
 
         buildInputs = with pkgs; [
