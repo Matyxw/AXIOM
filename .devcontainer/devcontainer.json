@@ -1,0 +1,27 @@
+{
+  "name": "AXIOM Dev Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/nix:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "rust-analyzer.server.path": "rust-analyzer",
+        "nix.enableLanguageServer": true,
+        "nix.serverPath": "nil"
+      },
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "mkhl.direnv",
+        "jnoortheen.nix-ide",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  },
+  "postCreateCommand": "nix profile install nixpkgs#direnv && direnv allow",
+  "remoteUser": "vscode"
+}
