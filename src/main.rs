@@ -46,8 +46,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app = handlers::app_router(Arc::clone(&state));
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
-    info!("[main] Servidor escuchando en http://0.0.0.0:3000");
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3001").await?;
+    info!("[main] Servidor escuchando en http://0.0.0.0:3001");
 
     axum::serve(listener, app).await?;
 

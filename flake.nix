@@ -29,9 +29,10 @@
         # ---------------------------------------------------------------
         rustToolchain = pkgs.rust-bin.stable."1.89.0".default.override {
           extensions = [
-            "rust-src"   # Requerido por rust-analyzer
-            "rustfmt"    # Formateo de código
-            "clippy"     # Linter oficial
+            "rust-src"      # Requerido por rust-analyzer
+            "rustfmt"       # Formateo de código
+            "clippy"        # Linter oficial
+            "rust-analyzer" # LSP para VSCode
           ];
           # Target nativo Linux x86_64 (WSL2)
           targets = [ "x86_64-unknown-linux-gnu" ];
