@@ -127,17 +127,55 @@ export default function Home() {
       }
     );
 
-    gsap.from(".chat-msg", {
+    const chatTl = gsap.timeline({
       scrollTrigger: {
         trigger: ".chat-container",
         start: "top 60%",
-      },
-      y: 30,
-      opacity: 0,
-      stagger: 0.15,
-      duration: 0.8,
-      ease: "power3.out"
+      }
     });
+
+    chatTl
+      .set(".chat-msg-1", { display: "flex" })
+      .to(".chat-msg-1", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" })
+      
+      .addLabel("wait1", "+=0.6")
+      
+      .set(".typing-a-1", { display: "flex" }, "wait1")
+      .to(".typing-a-1", { opacity: 1, y: 0, duration: 0.3 })
+      
+      .addLabel("wait2", "+=1.8")
+      
+      .to(".typing-a-1", { opacity: 0, duration: 0.2 }, "wait2")
+      .set(".typing-a-1", { display: "none" })
+      
+      .set(".chat-msg-2", { display: "flex" })
+      .to(".chat-msg-2", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" })
+      
+      .addLabel("wait3", "+=1.0")
+      
+      .set(".typing-u-1", { display: "flex" }, "wait3")
+      .to(".typing-u-1", { opacity: 1, y: 0, duration: 0.3 })
+      
+      .addLabel("wait4", "+=1.5")
+      
+      .to(".typing-u-1", { opacity: 0, duration: 0.2 }, "wait4")
+      .set(".typing-u-1", { display: "none" })
+      
+      .set(".chat-msg-3", { display: "flex" })
+      .to(".chat-msg-3", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" })
+      
+      .addLabel("wait5", "+=0.8")
+      
+      .set(".typing-a-2", { display: "flex" }, "wait5")
+      .to(".typing-a-2", { opacity: 1, y: 0, duration: 0.3 })
+      
+      .addLabel("wait6", "+=1.5")
+      
+      .to(".typing-a-2", { opacity: 0, duration: 0.2 }, "wait6")
+      .set(".typing-a-2", { display: "none" })
+      
+      .set(".chat-msg-4", { display: "flex" })
+      .to(".chat-msg-4", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
 
     // 3. ARCHITECTURE BENTO 
     gsap.from(".bento-item", {
@@ -166,7 +204,7 @@ export default function Home() {
       ease: "power3.out"
     });
 
-    gsap.to(".roi-box", {
+    gsap.to(".roi-box-wrapper", {
       y: -30,
       scrollTrigger: {
         trigger: ".roi-section",
@@ -175,6 +213,55 @@ export default function Home() {
         scrub: 1.5
       }
     });
+
+    // Tilt effect for ROI box
+    const roiBox = document.querySelector('.roi-tilt-card');
+    const roiGlare = document.querySelector('.roi-glare');
+    if (roiBox && roiGlare) {
+      roiBox.addEventListener('mousemove', (e: any) => {
+        const rect = roiBox.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = ((y - centerY) / centerY) * -8;
+        const rotateY = ((x - centerX) / centerX) * 8;
+        
+        gsap.to(roiBox, {
+          rotateX,
+          rotateY,
+          ease: "power2.out",
+          duration: 0.4
+        });
+        
+        gsap.to(roiGlare, {
+          x: x - rect.width / 2,
+          y: y - rect.height / 2,
+          opacity: 1,
+          ease: "power2.out",
+          duration: 0.4
+        });
+      });
+      
+      roiBox.addEventListener('mouseleave', () => {
+        gsap.to(roiBox, {
+          rotateX: 0,
+          rotateY: 0,
+          ease: "power2.out",
+          duration: 0.8
+        });
+        
+        gsap.to(roiGlare, {
+          x: 0,
+          y: 0,
+          opacity: 0,
+          ease: "power2.out",
+          duration: 0.8
+        });
+      });
+    }
 
     // 5. TESTIMONIAL
     gsap.from(".testimonial-card", {
@@ -309,14 +396,23 @@ export default function Home() {
               <div className="col-span-1 md:col-span-3 flex flex-col justify-end p-8 bg-transparent relative overflow-hidden">
                 <div className="relative z-10 flex flex-col gap-6 max-w-xl text-[14px] font-sans">
                   
-                  <div className="chat-msg flex items-start gap-4">
+                  <div className="chat-msg-1 hidden opacity-0 translate-y-4 items-start gap-4">
                     <div className="w-7 h-7 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[11px] text-neutral-400 shrink-0 shadow-sm">U</div>
                     <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-5 py-3.5 leading-relaxed font-light shadow-sm">
                       El servicio se ve bien, pero $3,500 de setup me parece elevado en comparación con otras propuestas. Lo vamos a pensar.
                     </div>
                   </div>
                   
-                  <div className="chat-msg flex items-start gap-4">
+                  <div className="typing-a-1 hidden opacity-0 translate-y-4 items-start gap-4">
+                    <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.2)]">A</div>
+                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm flex items-center gap-1.5 h-[38px]">
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+
+                  <div className="chat-msg-2 hidden opacity-0 translate-y-4 items-start gap-4">
                     <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.2)]">A</div>
                     <div className="text-neutral-200 px-1 py-1 leading-relaxed font-light">
                       Entiendo perfectamente. Es importante aclarar que nuestra infraestructura reduce el tiempo de implementación de 3 meses a 1 semana. <br/><br/>
@@ -324,14 +420,32 @@ export default function Home() {
                     </div>
                   </div>
                   
-                  <div className="chat-msg flex items-start gap-4">
+                  <div className="typing-u-1 hidden opacity-0 translate-y-4 items-start gap-4">
+                    <div className="w-7 h-7 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[11px] text-neutral-400 shrink-0 shadow-sm">U</div>
+                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm flex items-center gap-1.5 h-[38px]">
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+
+                  <div className="chat-msg-3 hidden opacity-0 translate-y-4 items-start gap-4">
                     <div className="w-7 h-7 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[11px] text-neutral-400 shrink-0 shadow-sm">U</div>
                     <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-5 py-3.5 leading-relaxed font-light shadow-sm">
                       Es un buen punto lo de los tiempos. Mandame el link de pago y lo cerramos hoy mismo.
                     </div>
                   </div>
 
-                  <div className="chat-msg flex items-start gap-4 pb-2">
+                  <div className="typing-a-2 hidden opacity-0 translate-y-4 items-start gap-4">
+                    <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.2)]">A</div>
+                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm flex items-center gap-1.5 h-[38px]">
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+
+                  <div className="chat-msg-4 hidden opacity-0 translate-y-4 items-start gap-4 pb-2">
                     <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0">A</div>
                     <div className="text-neutral-200 px-1 py-1 flex flex-col gap-3 font-light">
                       Decisión acertada. Aquí tienes el enlace de facturación segura.
@@ -415,20 +529,24 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="roi-box w-full lg:w-[480px] bg-[#050505]/80 backdrop-blur-md border border-white/[0.08] rounded-2xl p-10 relative overflow-hidden shadow-[0_0_50px_rgba(255,255,255,0.02),inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.04)_0%,transparent_50%)] pointer-events-none"></div>
-              
-              <h3 className="text-neutral-500 text-[11px] font-mono mb-4 uppercase tracking-[0.15em] relative z-10">Fuga de Capital (Mensual)</h3>
-              
-              <div ref={revenueRef} className="text-[56px] font-medium text-white tracking-tight mb-8 leading-none relative z-10">
-                ${lostRevenue.toLocaleString('en-US')}
+            <div className="roi-box-wrapper w-full lg:w-[480px]" style={{ perspective: '1000px' }}>
+              <div className="roi-tilt-card w-full bg-[#050505]/80 backdrop-blur-md border border-white/[0.08] rounded-2xl p-10 relative overflow-hidden shadow-[0_0_50px_rgba(255,255,255,0.02),inset_0_1px_0_rgba(255,255,255,0.05)]" style={{ transformStyle: 'preserve-3d' }}>
+                <div className="roi-glare absolute top-1/2 left-1/2 w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_50%)] pointer-events-none opacity-0 mix-blend-screen -translate-x-1/2 -translate-y-1/2 z-20"></div>
+                
+                <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.04)_0%,transparent_50%)] pointer-events-none"></div>
+                
+                <h3 className="text-neutral-500 text-[11px] font-mono mb-4 uppercase tracking-[0.15em] relative z-10" style={{ transform: 'translateZ(20px)' }}>Fuga de Capital (Mensual)</h3>
+                
+                <div ref={revenueRef} className="text-[56px] font-medium text-white tracking-tight mb-8 leading-none relative z-10" style={{ transform: 'translateZ(40px)' }}>
+                  ${lostRevenue.toLocaleString('en-US')}
+                </div>
+                
+                <div className="w-full h-[1px] bg-gradient-to-r from-white/[0.1] to-transparent my-6 relative z-10" style={{ transform: 'translateZ(20px)' }}></div>
+                
+                <p className="text-[14px] text-neutral-400 leading-relaxed font-light relative z-10" style={{ transform: 'translateZ(30px)' }}>
+                  Este es el capital que no ingresa a tu empresa por demoras. <strong className="text-white font-normal">AXIOM absorbe esta cuota</strong> interactuando con tus clientes de forma nativa e instantánea.
+                </p>
               </div>
-              
-              <div className="w-full h-[1px] bg-gradient-to-r from-white/[0.1] to-transparent my-6 relative z-10"></div>
-              
-              <p className="text-[14px] text-neutral-400 leading-relaxed font-light relative z-10">
-                Este es el capital que no ingresa a tu empresa por demoras. <strong className="text-white font-normal">AXIOM absorbe esta cuota</strong> interactuando con tus clientes de forma nativa e instantánea.
-              </p>
             </div>
             
           </div>
