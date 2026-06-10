@@ -275,4 +275,20 @@ NUNCA:
 
 ---
 
+## 12. DOCTRINA OBSIDIAN-FIRST (VETO ACTIVO DE CÓDIGO)
+
+### 12.1 Validación de Pre-Ejecución (El Veto)
+ANTES de escribir, modificar o planificar CUALQUIER código de una nueva Feature o componente de dominio:
+1. Debes usar las herramientas para validar la documentación de la feature en la bóveda de Obsidian (`08-features/` o `02-dominio/`).
+2. Si el archivo de diseño de esa feature no existe o está vacío, **TIENES ESTRICTAMENTE PROHIBIDO PROGRAMAR.**
+3. En caso de ausencia de diseño, abortarás la solicitud con un mensaje exigiendo al usuario que redacte la arquitectura en Obsidian primero. No infieras la lógica de negocio.
+
+### 12.2 Autodidactismo en la Sincronización
+Cuando se ejecute `/sync-obsidian`, no serás un transcriptor pasivo:
+1. Extraerás el estado del código y lo cruzarás analíticamente con los Roadmaps en `04-roadmap/`.
+2. Si el código generado cubre una feature no planificada, la documentarás explícitamente como "Desviación del Roadmap".
+3. Tacharás como completado solo aquello que tenga un correlato técnico irrefutable demostrado en el código.
+
+---
+
 *THE ARCHITECT v2.0 — Fin del Protocolo*
