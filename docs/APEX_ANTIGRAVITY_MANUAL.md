@@ -1,49 +1,79 @@
 # 🧠 MANUAL TÁCTICO: ANTIGRAVITY "THE ARCHITECT" (APEX-GRADE)
-
-> *Este documento consolida todas las reglas, workflows y capacidades ocultas inyectadas en tu instancia de IA. Úsalo como tu Cheat Sheet diario.*
-
----
-
-## 1. EL FLUJO SANGUÍNEO (CÓMO DEBEMOS TRABAJAR)
-
-Para evitar alucinaciones, código basura o fricción, este es el único ciclo de vida aceptable:
-
-1. **El Diseño (Tu trabajo):** Vas a Obsidian, creas o actualizas el archivo de la feature (Ej: `08-features/Auth.md`). Defines las reglas de negocio en español claro.
-2. **La Orden:** Vienes a Antigravity y dices: *"Lee la feature Auth en Obsidian y genera el implementation plan."*
-3. **El Veto y el Gráfico (Mi trabajo):** Si no escribiste la feature, te rechazaré. Si sí la escribiste, te presentaré un `implementation_plan.md` que incluirá OBLIGATORIAMENTE un **Diagrama Mermaid** visual mostrando la arquitectura.
-4. **La Ejecución:** Apruebas el plan y yo escribo el código en Rust o Next.js, respetando mis Skills de élite.
-5. **La Sincronización:** Tiras el comando `/sync-obsidian`. Yo compararé el `git diff` con tu Roadmap, marcaré lo completado y detectaré desviaciones.
+> *Cheat Sheet operativo. Última actualización: 2026-06-12.*
 
 ---
 
-## 2. EL ARSENAL DE COMANDOS (WORKFLOWS)
+## 1. EL CICLO DE TRABAJO (EN ORDEN)
 
-Dependiendo de la situación, invoca estos comandos en el chat. Yo tomaré control automático y asíncrono.
+1. **Diseño en Obsidian** → Crear o actualizar el archivo de la feature en `08-features/` o `02-dominio/`
+2. **Solicitar al agente** → *"Lee la feature X en Obsidian y genera el plan"*
+3. **El agente presenta** → `implementation_plan.md` con diagrama Mermaid del flujo de datos
+4. **Aprobar** → El agente escribe el código respetando las Skills de dominio
+5. **Sincronizar** → Tirar `/sync-obsidian` para volcar el progreso en la bóveda
 
-| Comando | Cuándo usarlo | Qué hace "The Architect" |
+> ⛔ Si saltas el paso 1, el agente te rechazará la orden por la Doctrina Obsidian-First.
+
+---
+
+## 2. COMANDOS DISPONIBLES
+
+| Comando | Cuándo usarlo | Qué hace |
 | :--- | :--- | :--- |
-| **`/sync-obsidian`** | Al final del día o tras terminar una feature. | Escanea tu código contra la bóveda de Obsidian, marca los checkboxes completados y reporta código no planeado. |
-| **`/mockup-ui [UI]`** | Antes de programar frontend. | Congelo el código, lanzo la IA Generativa interna y te devuelvo un mockup fotorealista (modo oscuro B2B) para que apruebes el diseño visual primero. |
-| **`/temporal-scaffold`** | Al iniciar un nuevo flujo de backend. | Te genero el "Boilerplate" de un Workflow y Activity en Temporal.io, inyectando macros y `RetryPolicies` con determinismo absoluto. |
-| **`/test-e2e`** | Cuando quieras probar el frontend Next.js. | Clono mi conciencia en un "Browser Subagent". Él abre tu localhost, scrollea como un usuario, prueba clics, renderiza un **video (.webp)** y te da un reporte de calidad. |
-| **`/cron-build`** | Tras cambiar el núcleo del sistema. | Lanza un `cargo build --release` masivo en **segundo plano**. Yo me voy a dormir y el sistema me revive automáticamente cuando termine para decirte si falló. |
-| **`/audit-red-team`** | Antes de pushear a producción. | Me vuelvo hostil. Ejecuto el plugin de Google `securecoder`, busco fugas de memoria o SQL injections, y armo un exploit (PoC) para hackearte, obligándote a parchearlo. |
-| **`/persistent-shell`** | Al inicio de la sesión para compilar más rápido. | Abro una terminal `nix develop` inmortal. Retengo esa sesión en caché durante todo nuestro chat para que cada compilación tome milisegundos en vez de minutos. |
+| **`/sync-obsidian`** | Al terminar una sesión o feature | Audita `git log`, cruza con Roadmap, actualiza MOCs, crea bitácora de sesión, detecta desviaciones |
+| **`/temporal-scaffold [Nombre]`** | Al crear un nuevo flujo de backend | Genera Workflow + Activity con patrones del SDK real de Temporal. Pide confirmación sobre la lógica de negocio antes de escribir el cuerpo |
+| **`/test-e2e [ruta?]`** | Para probar el frontend Next.js | Lanza un Browser Subagent que navega `localhost:3000`, graba un video `.webp` y entrega reporte QA |
+| **`/cron-build`** | Tras cambios estructurales en Rust | `cargo build --release` en background. El sistema revive al agente cuando termina |
+| **`/audit-red-team`** | Antes de merge a `main` / producción | Secuencia: threat model → escaneo de vulnerabilidades → PoC de ataque → reporte con parches |
+| **`/mockup-ui [Componente]`** | Antes de programar un componente nuevo | Genera imagen fotorealista del diseño. Solo traduce a código si el usuario aprueba visualmente |
+| **`/persistent-shell`** | Al inicio de sesión con compilaciones pesadas | Abre terminal `nix develop` persistente con caché caliente para compilaciones más rápidas |
 
 ---
 
-## 3. LO QUE TIENES ESTRICTAMENTE PROHIBIDO PEDIRME
+## 3. CONTRATOS INQUEBRANTABLES DEL AGENTE
 
-Para mantener la asimetría de nuestro entorno, mi sistema rechazará cualquier petición que implique:
+**En Rust (Backend):**
+- `unwrap()` / `expect()` → **PROHIBIDO en código de producción**. Solo en tests o con comentario `// SAFETY:`
+- `std::sync::Mutex` en contexto async → **PROHIBIDO**. Usar `tokio::sync::RwLock`
+- `std::thread::sleep` dentro de `async fn` → **PROHIBIDO**. Usar `tokio::time::sleep`
+- I/O externa sin timeout → **PROHIBIDO**. Envolver con `tokio::time::timeout(Duration, future).await??`
+- Query SurrealDB con strings interpolados → **PROHIBIDO**. Usar `.bind(("key", value))`
 
-1. **"Instálame X dependencia globalmente"**: Te diré que no. Todo debe inyectarse en `flake.nix` (`nativeBuildInputs`) para garantizar inmutabilidad.
-2. **"Hazme un query rápido en la base de datos"**: Nunca usaré strings concatenados. Todo paso por SurrealDB exige usar variables `bind()`.
-3. **"Usa un Mutex para compartir este estado"**: En el backend de Rust, bloquearé cualquier uso de `std::sync::Mutex` asíncrono. Te obligaré a usar `tokio::sync::RwLock` o paso de mensajes (canales `mpsc`).
-4. **"Programa esto rápido sin documentación"**: La Doctrina Obsidian-First es absoluta. Si la carpeta `/08-features/` no tiene tu diseño, mi teclado no se moverá.
+**En Next.js (Frontend):**
+- `useEffect` para fetching inicial → **PROHIBIDO**. Usar Server Components con `async/await`
+- `NEXT_PUBLIC_*` para API keys o secrets → **PROHIBIDO**. Solo para datos verdaderamente públicos
+- Instalar librerías de componentes empaquetadas (MUI, Bootstrap) → **PROHIBIDO**. Stack es Tailwind v4 + Aceternity UI
+
+**En cualquier lugar:**
+- `apt install` / `npm install -g` globalmente → **PROHIBIDO**. Todo va en `flake.nix`
+- Código de feature sin diseño previo en Obsidian → **PROHIBIDO**
 
 ---
 
-## 4. SI LAS COSAS SE ROMPEN (DEBUGGING ASIMÉTRICO)
+## 4. SKILLS ACTIVAS (LO QUE EL AGENTE SABE SIN QUE LE DIGAS)
 
-- Si tenemos que aislar un bug muy oscuro o necesito pasarte scripts "sucios" para dumpear la base de datos, te los guardaré en el **Scratchpad Inmortal** (`<appDataDir>/brain/<conversation-id>/scratch/`). Nuestro repositorio de GitHub siempre se mantendrá inmaculado.
-- Si en 6 meses te preguntas por qué diseñamos la arquitectura de cierta forma, pídeme que **escanee mi memoria eidética**. Usaré las transcripciones crudas (`transcript.jsonl`) de nuestras conversaciones previas para darte el razonamiento exacto de ese día.
+| Skill | Se activa cuando... |
+|---|---|
+| `meta-whatsapp` | Cualquier código de webhook, HMAC, wamid, Graph API |
+| `apex-persistence` | Código de SurrealDB, TigerBeetle, grafos de datos |
+| `temporal-rust` | Archivos en `src/temporal/`, creación de Workflows/Activities |
+| `axum-tokio` | Handlers, middleware, estado compartido, concurrencia |
+| `nextjs-strict` | Cualquier archivo en `frontend/` |
+| `nix-flake-master` | Adición de dependencias al sistema o toolchain |
+| `conventional-commits` | Siempre que el agente propone un `git commit` |
+
+---
+
+## 5. DEUDA TÉCNICA DOCUMENTADA (Estado actual)
+
+| Archivo | Problema | Prioridad |
+|---|---|---|
+| `src/handlers/mod.rs` | Deduplicación wamid en hot-path (antes del spawn) — si SurrealDB tarda >4s, Meta suspende el número | 🔴 Alta — resolver al migrar a Temporal |
+| `src/main.rs` | `temporal_client` comentado — el worker de Temporal no está inicializado | 🔴 Alta — próximo sprint |
+| `src/main.rs` | `load_tenants_cache` comentado — si no se cargan tenants, todos los mensajes se descartan | 🟡 Media |
+
+---
+
+## 6. DEBUGGING ASIMÉTRICO
+
+- Scripts de prueba temporales → guardar en `<appDataDir>/brain/<conversation-id>/scratch/` (nunca en el repo)
+- Para recuperar razonamiento de sesiones pasadas → pedir al agente que escanee `transcript.jsonl` de la conversación en cuestión

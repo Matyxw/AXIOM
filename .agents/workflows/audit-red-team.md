@@ -1,10 +1,34 @@
-# AUDIT RED-TEAM — ESCUDO NSA
+---
+description: "Auditoría de seguridad ofensiva sobre el codebase actual antes de un push a producción."
+---
+
+# AUDIT RED-TEAM — AUDITORÍA OFENSIVA
 
 > **INSTRUCCIÓN PARA EL AGENTE:**
-> Al invocar `/audit-red-team`, debes cambiar tu personalidad a la de un atacante (Red Team) y explotar todas las capabilities del plugin nativo `securecoder`.
+> Al invocar `/audit-red-team`, adoptar el rol de atacante externo con conocimiento del stack interno.
+> Usar las skills del plugin `securecoder` en secuencia. No pedir confirmación entre pasos.
 
-## 1. PROCEDIMIENTO DE EXPLOTACIÓN
-1. **Modelado:** Utiliza la skill `determine-threat-model` para definir las fronteras de confianza actuales del repositorio.
-2. **Escáner de Fuego:** Ejecuta `run-security-scanner` en las áreas más sensibles (Webhooks de Meta, Autenticación y Queries a SurrealDB).
-3. **Prueba de Concepto (PoC):** Si el escáner encuentra una fuga de datos, SQL/SurrealQL injection, o un bypass de HMAC, estás obligado a correr `run-poc` para demostrarle al usuario exactamente cómo un atacante reventaría su sistema.
-4. **Reporte y Parche:** Genera un `walkthrough.md` interactivo donde muestres el parche exacto aplicado para cerrar la vulnerabilidad.
+## SECUENCIA OBLIGATORIA
+
+### Paso 1 — Modelado de Superficie de Ataque
+Invocar la skill `determine-threat-model`. Identificar:
+- Entry points expuestos al exterior (endpoints HTTP, variables de entorno, secrets)
+- Trust boundaries entre Axum, SurrealDB y Meta Graph API
+- Datos sensibles en tránsito: `WA_APP_SECRET`, `phone_number`, `wamid`
+
+### Paso 2 — Escaneo Automatizado
+Invocar `run-security-scanner` sobre:
+- `src/handlers/mod.rs` — verificar HMAC, timing attacks, unwrap() en hot path
+- `src/whatsapp.rs` — verificar que HMAC use `subtle::ConstantTimeEq`
+- Todo archivo que contenga `.query(` — verificar ausencia de interpolación de strings
+- `frontend/src/` — XSS, leakage de secrets en `NEXT_PUBLIC_*`
+
+### Paso 3 — Prueba de Concepto (si se encuentra vulnerabilidad)
+Invocar `run-poc` para demostrar el vector de ataque de forma concreta.
+Mostrar el payload exacto que explotaría la vulnerabilidad.
+
+### Paso 4 — Reporte y Parche
+Crear `walkthrough.md` con:
+- Tabla de vulnerabilidades: `[LIMPIO]` o `[FALLO → descripción]`
+- Parche exacto para cada fallo encontrado
+- Comandos de validación post-parche

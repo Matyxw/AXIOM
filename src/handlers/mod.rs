@@ -124,9 +124,12 @@ async fn webhook_message_handler(
                 );
             }
             Ok(mut response) => {
-                let is_duplicate: Option<serde_json::Value> = response
-                    .take(1)
-                    .unwrap_or(None);
+                    // CORRECCIÓN: take() retorna Result<Option<T>, _>.
+                    // unwrap_or(None) sobre Result<Option> es un anti-patrón — usa ok().flatten()
+                    let is_duplicate: Option<serde_json::Value> = response
+                        .take(1)
+                        .ok()
+                        .and_then(|opt| opt);
 
                 if is_duplicate.is_none() || is_duplicate == Some(serde_json::Value::Null) {
                     info!(
@@ -144,9 +147,15 @@ async fn webhook_message_handler(
         }
     }
 
-    info!("[webhook_message] Firma verificada. Despachando procesamiento async.");
+    // TODO(deuda-técnica): La deduplicación por wamid ocurre ANTES del tokio::spawn,
+    // lo que significa que la latencia de SurrealDB forma parte del tiempo de respuesta
+    // visible para Meta. Si SurrealDB tarda >4s, Meta reintenta y el número se suspende.
+    // Solución definitiva: mover la deduplicación DENTRO del spawn (post-200),
+    // aceptando que en caso de crash del worker entre el 200 y la dedup puede haber
+    // un duplicado procesado — mitigable con idempotencia en la Activity de Temporal.
+    tracing::info!("[webhook_message] Firma verificada. Despachando procesamiento async.");
 
-    let _state_clone = Arc::clone(&state);
+    let state_clone = Arc::clone(&state);
     let body_clone = body_bytes.clone();
 
     tokio::spawn(async move {
