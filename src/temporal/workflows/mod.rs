@@ -19,3 +19,5 @@ pub async fn message_processing_workflow(
     // ctx.activity(...)
     Ok(())
 }
+
+pub mod ingestion_whatsapp;

@@ -19,10 +19,8 @@ tracing-subscriber = { version = "0.3",  features = ["env-filter"] }
 thiserror          = "2"
 config             = "0.14"
 dotenvy            = "0.15"
-# temporal-sdk y temporal-sdk-core: requieren confirmar versiones del crate publicado.
-# Ver comentario FIXME en src/temporal/ para el estado actual.
-# temporal-sdk       = { git = "https://github.com/temporalio/sdk-core", branch = "master" }
-# temporal-sdk-core  = { git = "https://github.com/temporalio/sdk-core", branch = "master" }
+# temporal-sdk       = { git = "https://github.com/temporalio/sdk-core" }
+# temporal-sdk-core  = { git = "https://github.com/temporalio/sdk-core" }
 # uuid: se usará para generar IDs de Workflow al integrar Temporal.
 uuid               = { version = "1.0", features = ["v4", "fast-rng"] }
 

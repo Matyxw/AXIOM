@@ -31,3 +31,5 @@ pub async fn send_reply_activity(
     crate::whatsapp::send_whatsapp_message(&state.http_client, &to, &body, &state).await
 }
 
+pub mod ingestion_whatsapp;
+
