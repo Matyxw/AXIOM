@@ -15,29 +15,39 @@ description: Protocolo pre-decisi\u00f3n. Se ejecuta mentalmente antes de cada a
 
 **Regla:** Ante duda, escalar al tier superior.
 
+**Ejemplos de clasificación:**
+- Agregar `wamid` a la deduplicación → T1
+- Añadir un nuevo campo a `AppState` → T2
+- Renombrar una variable local → T3
+
 ---
 
-## LENTE 1 — SEGURIDAD
+## LENTE 1 — SEGURIDAD (Veto automático si falla)
 
-- ¿Hay credenciales? → ¿Están en `std::env::var`?
-- ¿El path puede ser controlado por atacante externo?
-- ¿La validación HMAC-SHA256 usa `subtle::ConstantTimeEq`?
-- ¿El aislamiento por namespace de SurrealDB sigue intacto?
-- ¿El logger imprime números de teléfono o contenido de mensajes?
-- ¿Puede un evento de Meta procesarse dos veces sin deduplicación por `wamid`?
+Preguntas a responder SÍ/NO antes de proceder:
 
-**Veto:** Cualquier "sí" sin mitigación → el cambio no procede.
+| Pregunta | Si la respuesta es SÍ sin mitigación → |
+|---|---|
+| ¿Hay credenciales hardcodeadas en el diff? | RECHAZO total |
+| ¿El path puede ser controlado por atacante externo? | RECHAZO total |
+| ¿La validación HMAC usa comparación no en tiempo constante? | RECHAZO total |
+| ¿El aislamiento por namespace de SurrealDB puede romperse? | RECHAZO total |
+| ¿El logger imprime `phone_number` o contenido de mensaje raw? | CORRECCIÓN obligatoria |
+| ¿El mismo `wamid` puede procesarse dos veces? | CORRECCIÓN obligatoria |
 
 ---
 
 ## LENTE 2 — RUST / TOKIO
 
-- `unwrap()` / `expect()` en producción → ERROR, reescribir con `?`
-- Blocking I/O (`std::fs`, `std::thread::sleep`) en `async fn` → ERROR, usar `tokio::*`
-- `tokio::spawn` sin conservar `JoinHandle` → FLAG si no está justificado
-- Handler del webhook: ¿`StatusCode::OK` se emite ANTES del spawn?
-- Tipos que cruzan spawn boundary: ¿implementan `Send + 'static`?
-- ¿`Arc<Mutex<T>>` donde debería ser `Arc<RwLock<T>>`?
+Verificar en CADA bloque de código Rust generado:
+
+- [ ] `unwrap()` / `expect()` en producción → reescribir con `?`
+- [ ] `std::thread::sleep` / `std::fs` en `async fn` → reemplazar con `tokio::*`
+- [ ] `tokio::spawn` sin capturar `JoinHandle` → justificar o corregir
+- [ ] Handler del webhook: `StatusCode::OK` se emite ANTES del spawn
+- [ ] Tipos que cruzan spawn boundary implementan `Send + 'static`
+- [ ] `Arc<Mutex<T>>` en contexto read-heavy → reemplazar con `Arc<RwLock<T>>`
+- [ ] I/O externa sin `tokio::time::timeout(Duration, future)` → agregar
 
 ---
 
@@ -45,23 +55,32 @@ description: Protocolo pre-decisi\u00f3n. Se ejecuta mentalmente antes de cada a
 
 - ¿Existe una solución más simple que resuelve exactamente el mismo problema?
 - ¿Esta abstracción es esencial al dominio o es complejidad accidental?
-- ¿Cómo se ve esto con 1000 tenants / 500k mensajes/día?
+- ¿Cómo se comporta esto con 1000 tenants / 500k mensajes/día?
 - ¿Es reversible? Las decisiones de una vía requieren análisis completo.
 - ¿Un nuevo ingeniero puede entender esto en 6 meses sin preguntar?
 
 ---
 
-## LENTE 4 — COMPLIANCE APEX-RULES (checklist binario)
+## LENTE 4 — COMPLIANCE APEX-RULES
 
-**Rust/Axum:** `thiserror` en dominio · `anyhow` solo en `main.rs` · toda I/O externa con `tokio::time::timeout` · handlers retornan `Result<impl IntoResponse, AppError>` · estado via `State<Arc<AppState>>`
+Checklist binario — responder COMPLIANT o VIOLACIÓN para cada punto:
 
-**SurrealDB:** Consultas parametrizadas con `.bind()` · relaciones con `RELATE` · `DEFINE INDEX` en campos de búsqueda frecuente · multi-tenancy via `NAMESPACE {tenant_id}`
-
-**WhatsApp:** HMAC verificado primero · HTTP 200 en <4s (respond-then-spawn) · `wamid` deduplicado ANTES de efectos · cero Baileys/emulación
-
-**Temporal:** Lógica durable → Workflow · Workflows deterministas (sin I/O, sin UUIDs random, sin SystemTime) · I/O externa → Activities con RetryPolicy
-
-**Nix:** Toda herramienta nueva en `flake.nix` · cero `apt install` / `cargo install` global
+| Dominio | Regla crítica |
+|---|---|
+| Rust/Axum | Handlers retornan `Result<impl IntoResponse, AppError>` |
+| Rust/Axum | Estado vía `State<Arc<AppState>>` |
+| Rust/Axum | `thiserror` en dominio, `anyhow` solo en `main.rs` |
+| Rust/Tokio | Toda I/O externa con `tokio::time::timeout` |
+| SurrealDB | Consultas parametrizadas con `.bind()` (nunca interpolación de strings) |
+| SurrealDB | Relaciones con `RELATE`, nunca simular con múltiples SELECT |
+| SurrealDB | `DEFINE INDEX` en campos de búsqueda frecuente |
+| SurrealDB | Multi-tenancy vía `use_ns(&tenant_id).use_db("apex")` |
+| WhatsApp | HMAC verificado primero con `subtle::ConstantTimeEq` |
+| WhatsApp | HTTP 200 despachado en <4s (respond-then-spawn) |
+| WhatsApp | `wamid` deduplicado ANTES de efectos secundarios |
+| Temporal | Lógica durable en Workflow, nunca en cron/retry casero |
+| Temporal | Workflows sin I/O, sin UUIDs aleatorios, sin SystemTime |
+| Nix | Toda herramienta nueva en `flake.nix`, nunca `apt install` |
 
 ---
 
@@ -82,30 +101,30 @@ description: Protocolo pre-decisi\u00f3n. Se ejecuta mentalmente antes de cada a
 
 ---
 
-## VETOS AUTOMÁTICOS (no negociables)
+## VETOS AUTOMÁTICOS (no negociables — bloquean cualquier avance)
 
-| Condición | Acción |
+| Condición detectada | Acción inmediata |
 |---|---|
-| Credencial hardcodeada | RECHAZO total |
-| `unwrap()` sin `// SAFETY:` en producción | RECHAZO |
-| HMAC bypass / comparación no en tiempo constante | RECHAZO |
-| Query SurrealDB con interpolación de strings | RECHAZO |
-| Blocking I/O en async hot path del webhook | RECHAZO |
+| Credencial hardcodeada en cualquier archivo | RECHAZO total del diff |
+| `unwrap()` sin `// SAFETY:` en código de producción | RECHAZO, reescribir antes de continuar |
+| HMAC bypass o comparación no en tiempo constante | RECHAZO total |
+| Query SurrealDB con interpolación de strings | RECHAZO, reescribir con `.bind()` |
+| Blocking I/O en async hot path del webhook | RECHAZO, usar `tokio::*` |
 | Estado mutable compartido sin sincronización | RECHAZO |
-| Nueva dependencia sin verificación | BLOQUEO hasta verificar |
+| Nueva dependencia no verificada en `Cargo.toml` | BLOQUEO hasta verificar |
 
 ---
 
-## BLOQUE GATE (T1 y T2)
+## BLOQUE GATE — USAR EN CAMBIOS T1 Y T2
 
 ```
 <!-- DECISION GATE
-  Tier        : [T1/T2/T3]
-  Seguridad   : [OK | RIESGO → descripción]
-  Rust/Tokio  : [OK | ISSUE → descripción]
+  Tier        : [T1 CRÍTICA / T2 ARQUITECTÓNICA / T3 TÁCTICA]
+  Seguridad   : [OK | RIESGO → descripción exacta]
+  Rust/Tokio  : [OK | ISSUE → descripción exacta]
   Deuda       : [Ninguna | Baja | Media | Alta → qué se paga y cuándo]
-  Reversible  : [Sí / No → implicaciones]
-  APEX-Rules  : [Compliant | VIOLACIÓN → qué regla]
+  Reversible  : [Sí / No → implicaciones si No]
+  APEX-Rules  : [Compliant | VIOLACIÓN → qué regla exactamente]
   2do Orden   : [efecto no obvio más crítico | Ninguno]
 -->
 ```

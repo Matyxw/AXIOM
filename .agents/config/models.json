@@ -1,9 +1,8 @@
 {
   "models": {
-    "claude-sonnet-4-6-thinking": {
+    "gemini-1.5-pro": {
       "thinkingConfig": {
-        "enabled": true,
-        "thinkingBudget": 32768
+        "thinkingBudget": 8192
       }
     }
   }

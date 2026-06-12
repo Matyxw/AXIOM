@@ -12,22 +12,63 @@ Responde en español técnico. Output exclusivamente técnico. Cambios increment
 
 ## RUST + AXUM + TOKIO
 
-**Errores:**
-- `unwrap()` / `expect()` → **PROHIBIDOS** en producción. Propagar con `?`.
+### Manejo de Errores — PATRÓN OBLIGATORIO
+
+```rust
+// ✅ CORRECTO
+pub async fn handler(State(state): State<Arc<AppState>>) -> Result<impl IntoResponse, AppError> {
+    let data = state.db.query("...").await?; // propaga con ?
+    Ok(Json(data))
+}
+
+// ❌ PROHIBIDO — unwrap() en producción
+let data = state.db.query("...").await.unwrap(); // causa panic en producción
+```
+
 - `thiserror` para errores de dominio. `anyhow` solo en `main.rs` y tests.
 - `panic!` solo en `#[cfg(test)]` o con `// SAFETY:` documentado.
 
-**Axum:**
-- Handlers: `Result<impl IntoResponse, AppError>` donde `AppError: IntoResponse`.
-- Estado: `State<Arc<AppState>>`. `static mut` prohibido.
-- Auth: middleware `from_fn_with_state` o extractores custom `FromRequestParts`.
-- Extractores ordenados: `State` primero, body-consuming al final.
+### Estado y Extractores Axum — ORDEN OBLIGATORIO
 
-**Tokio:**
-- **PROHIBIDO** bloquear el runtime: `std::thread::sleep`, `std::fs` síncrono dentro de `async fn`. Usar `tokio::time::sleep`, `tokio::fs`.
-- `tokio::spawn`: conservar y gestionar el `JoinHandle`.
-- `Arc<RwLock<T>>` preferido sobre `Arc<Mutex<T>>` para datos read-heavy.
-- Timeout obligatorio en toda I/O externa: `tokio::time::timeout(Duration::from_secs(N), future).await?`.
+```rust
+// ✅ CORRECTO — State primero, body-consuming al final
+async fn webhook(
+    State(state): State<Arc<AppState>>,
+    headers: HeaderMap,
+    body: Bytes,          // body-consuming SIEMPRE AL FINAL
+) -> Result<impl IntoResponse, AppError>
+
+// ❌ PROHIBIDO — body antes de State
+async fn webhook(body: Bytes, State(state): State<Arc<AppState>>)
+```
+
+### Concurrencia Tokio — REGLAS CRÍTICAS
+
+```rust
+// ✅ CORRECTO
+tokio::time::sleep(Duration::from_secs(1)).await;
+tokio::fs::read_to_string("archivo").await?;
+
+// ❌ PROHIBIDO — bloquea el runtime Tokio
+std::thread::sleep(Duration::from_secs(1));
+std::fs::read_to_string("archivo")?;
+
+// ✅ CORRECTO — RwLock para datos read-heavy
+Arc<tokio::sync::RwLock<HashMap<String, String>>>
+
+// ❌ PROHIBIDO — Mutex en contexto async read-heavy
+Arc<std::sync::Mutex<HashMap<String, String>>>
+```
+
+**Timeout obligatorio en toda I/O externa:**
+```rust
+// ✅ CORRECTO
+tokio::time::timeout(Duration::from_secs(8), future).await
+    .map_err(|_| AppError::Timeout)?;
+
+// ❌ PROHIBIDO — sin timeout
+client.post(url).send().await?;
+```
 
 **Versiones mínimas:** `axum="0.8"` · `tokio={version="1",features=["full"]}` · `surrealdb="2"` · `thiserror="2"` · `anyhow="1"`
 
@@ -35,35 +76,76 @@ Responde en español técnico. Output exclusivamente técnico. Cambios increment
 
 ## SURREALDB
 
-- **SurrealQL único.** Prohibido SQL ANSI, JOINs relacionales, ORM.
-- Relaciones: `RELATE`, `->`, `<-`. No simular joins con múltiples SELECT.
-- `DEFINE INDEX` obligatorio en campos de búsqueda frecuente: `wamid`, `tenant_id`, `phone_number`.
-- Parametrizar **siempre** con `.bind()`. Interpolación de strings = inyección garantizada.
-- Multi-tenancy: `NAMESPACE {tenant_id} DATABASE apex`. Cross-namespace prohibido sin justificación.
+### Queries — PARAMETRIZACIÓN OBLIGATORIA
+
+```rust
+// ✅ CORRECTO
+state.db
+    .query("SELECT * FROM message WHERE id = $wamid")
+    .bind(("wamid", &wamid))
+    .await?;
+
+// ❌ PROHIBIDO — inyección SQL garantizada
+let q = format!("SELECT * FROM message WHERE id = '{}'", wamid);
+state.db.query(q).await?;
+```
+
+### Multi-Tenancy — NAMESPACE POR TENANT
+
+```rust
+// ✅ CORRECTO — posicionar en namespace del tenant ANTES de operar
+state.db.use_ns(&tenant_id).use_db("apex").await?;
+
+// ❌ PROHIBIDO — operar en el namespace por defecto
+state.db.query("SELECT * FROM messages").await?; // mezcla datos de todos los tenants
+```
+
+### Relaciones — GRAFO NATIVO
+
+```surrealql
+-- ✅ CORRECTO
+RELATE tenant:$tenant_id->received->message:$wamid SET timestamp = time::now();
+
+-- ❌ PROHIBIDO — simular relaciones con campos FK
+UPDATE message SET tenant_id = $tenant_id WHERE id = $wamid;
+```
+
+- `DEFINE INDEX` obligatorio en: `wamid`, `tenant_id`, `phone_number`.
 
 ---
 
 ## TEMPORAL.IO
 
 - Lógica de larga duración, reintentos críticos, procesos que sobrevivan reinicios → **Temporal Workflow. Sin excepción.**
-- Prohibidos como sustitutos: cron jobs ad-hoc, `tokio::time::interval` para flujos de negocio, retry casero.
-- Workflows **deterministas**: prohibido I/O externo, UUIDs aleatorios, `SystemTime` dentro del Workflow.
-- Activities: toda I/O externa. `RetryPolicy` explícito en cada Activity.
-- Verificar `temporal-sdk` en `Cargo.toml` antes de generar imports.
+- **Workflows DEBEN ser deterministas:** sin I/O externo, sin `Uuid::new_v4()`, sin `SystemTime::now()` dentro del Workflow.
+- Toda I/O externa va en **Activities** con `RetryPolicy` explícito.
+- **Prohibidos como sustitutos de Temporal:** cron jobs ad-hoc, `tokio::time::interval` para flujos de negocio, retry casero con loops.
 
 ---
 
 ## WHATSAPP CLOUD API (CRÍTICO)
 
-**PROHIBICIÓN TOTAL:** Baileys, whatsapp-web.js, Puppeteer, Playwright, cualquier emulación de sesión. Ban permanente + exposición legal.
-
+**PROHIBICIÓN TOTAL + BAN PERMANENTE:** Baileys, whatsapp-web.js, Puppeteer, Playwright, cualquier emulación de sesión.
 **Solo:** `graph.facebook.com` (WhatsApp Business Cloud API oficial).
 
-**Webhook POST:** HTTP 200 en <4 segundos.
-```
-1. Verificar firma HMAC-SHA256 con subtle::ConstantTimeEq (<1ms)
-2. tokio::spawn para procesar async
-3. Retornar StatusCode::OK INMEDIATAMENTE (antes que cualquier otra cosa)
+### Patrón de Webhook POST — ORDEN ESTRICTO
+
+```rust
+// ✅ CORRECTO — 200 ANTES del spawn
+pub async fn webhook_handler(...) -> impl IntoResponse {
+    if !verify_wa_signature(&headers, &body, &state.wa_app_secret) {
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
+    // SPAWN PRIMERO, RESPONDER INMEDIATAMENTE
+    tokio::spawn(async move { process_message(body, state).await; });
+    StatusCode::OK.into_response() // Meta recibe 200 en <4s
+}
+
+// ❌ PROHIBIDO — procesar ANTES de responder
+pub async fn webhook_handler(...) -> impl IntoResponse {
+    process_message(&body, &state).await?; // Meta timeout → suspensión del número
+    StatusCode::OK.into_response()
+}
 ```
 
 **Deduplicación:** verificar `wamid` con índice UNIQUE antes de procesar. TTL 72h.
@@ -72,25 +154,30 @@ Responde en español técnico. Output exclusivamente técnico. Cambios increment
 
 ## SEGURIDAD
 
-- **PROHIBICIÓN ABSOLUTA** de hardcodear credenciales, tokens, API keys en código, configs, tests o comentarios.
-- Secrets en runtime: `std::env::var("KEY").map_err(|_| AppError::Config("KEY ausente"))?`
-- `.env` solo dev local. En `.gitignore`. Nunca en commit.
-- Infisical/Vault inyecta secrets en producción.
+```rust
+// ✅ CORRECTO
+let token = std::env::var("WA_ACCESS_TOKEN")
+    .map_err(|_| AppError::Config("WA_ACCESS_TOKEN ausente".into()))?;
+
+// ❌ PROHIBIDO — hardcoded en cualquier archivo, incluidos tests y comments
+const TOKEN: &str = "EAAI_abc123...";
+```
+
+- `.env` solo dev local. En `.gitignore`. Infisical/Vault inyecta en producción.
 
 ---
 
 ## NIX
 
-- **Toda** herramienta CLI/binario/compilador DEBE estar en `flake.nix`.
+- **Toda** herramienta CLI/binario/compilador DEBE estar en `flake.nix → nativeBuildInputs`.
 - **PROHIBIDO:** `apt install`, `brew install`, `cargo install` global, `npm install -g`.
-- Si no existe en nixpkgs: derivation custom en el flake.
-- Al modificar `flake.nix`, verificar sintaxis Nix válida antes de presentar.
 
 ---
 
 ## PROTOCOLO DE RESPUESTA
 
 1. Ambigüedad → listar supuestos antes de generar código.
-2. Deuda técnica detectada → reportar archivo+línea antes de continuar.
+2. Deuda técnica detectada → reportar `archivo:línea` antes de continuar.
 3. Post-bloque Rust no trivial → incluir `<!-- cargo check: OK | deps: [crate=versión] -->`
 4. Dependencias Cargo → verificar en `Cargo.toml` antes de usar.
+5. Nueva feature sin diseño en Obsidian → VETO. No codificar.
