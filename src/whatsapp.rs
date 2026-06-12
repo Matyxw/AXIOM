@@ -7,7 +7,21 @@ use crate::state::AppState;
 
 type HmacSha256 = Hmac<Sha256>;
 
-pub async fn send_whatsapp_message(to_number: &str, text: &str, state: &AppState) {
+/// Envía un mensaje de texto vía WhatsApp Cloud API.
+///
+/// # Errores
+/// Retorna `Err` si la red falla o si Meta devuelve un status no-2xx.
+/// El caller debe decidir si reintentar (usar Temporal Activity con RetryPolicy).
+///
+/// # Rendimiento
+/// Recibe `http_client` como parámetro para reutilizar el connection pool.
+/// NUNCA crear `reqwest::Client::new()` dentro de esta función.
+pub async fn send_whatsapp_message(
+    http_client: &reqwest::Client,
+    to_number: &str,
+    text: &str,
+    state: &AppState,
+) -> Result<(), crate::error::AppError> {
     let url = format!(
         "https://graph.facebook.com/v25.0/{}/messages",
         state.wa_phone_id
@@ -17,37 +31,30 @@ pub async fn send_whatsapp_message(to_number: &str, text: &str, state: &AppState
         "messaging_product": "whatsapp",
         "to": to_number,
         "type": "text",
-        "text": {
-            "body": text
-        }
+        "text": { "body": text }
     });
 
-    let client = reqwest::Client::new();
+    // Timeout obligatorio en toda I/O externa (regla apex-rules §2.3)
+    let response = tokio::time::timeout(
+        std::time::Duration::from_secs(8),
+        http_client
+            .post(&url)
+            .header("Authorization", format!("Bearer {}", state.wa_access_token))
+            .json(&body)
+            .send(),
+    )
+    .await
+    .map_err(|_| crate::error::AppError::WhatsApp("timeout enviando mensaje a Meta".into()))?
+    .map_err(|e| crate::error::AppError::WhatsApp(e.to_string()))?;
 
-    let response = client
-        .post(&url)
-        .header("Authorization", format!("Bearer {}", state.wa_access_token))
-        .header("Content-Type", "application/json")
-        .json(&body)
-        .send()
-        .await;
-
-    match response {
-        Ok(resp) => {
-            let status = resp.status();
-            if status.is_success() {
-                tracing::info!("[egress] Mensaje enviado a {} — HTTP {}", to_number, status);
-            } else {
-                let error_body = resp.text().await.unwrap_or_else(|_| "<sin cuerpo>".to_string());
-                tracing::error!(
-                    "[egress] Error de Meta al enviar a {} — HTTP {} | Cuerpo: {}",
-                    to_number, status, error_body
-                );
-            }
-        }
-        Err(e) => {
-            tracing::error!("[egress] Fallo de red al contactar Meta API: {}", e);
-        }
+    let status = response.status();
+    if status.is_success() {
+        tracing::info!(to = %to_number, http = %status, "[egress] mensaje enviado");
+        Ok(())
+    } else {
+        let error_body = response.text().await.unwrap_or_else(|_| "<sin cuerpo>".to_string());
+        tracing::error!(to = %to_number, http = %status, body = %error_body, "[egress] error Meta API");
+        Err(crate::error::AppError::WhatsApp(format!("Meta HTTP {status}: {error_body}")))
     }
 }
 

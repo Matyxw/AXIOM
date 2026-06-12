@@ -38,7 +38,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         wa_verify_token: Arc::new(config.wa_verify_token),
         db: Arc::new(db),
         tenant_cache,
-        // temporal_client,
+        http_client: reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(10))
+            .build()
+            .expect("fallo al construir reqwest::Client"), // SAFETY: solo falla si TLS no compila
     });
 
     // TODO: Init Temporal Worker here

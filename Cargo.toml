@@ -16,12 +16,13 @@ reqwest            = { version = "0.12", features = ["json"] }
 surrealdb          = { version = "2",    features = ["kv-surrealkv"] }
 tracing            = { version = "0.1" }
 tracing-subscriber = { version = "0.3",  features = ["env-filter"] }
-thiserror          = "1.0"
+thiserror          = "2"
 config             = "0.14"
 dotenvy            = "0.15"
-# FIXME: Configurar la dependencia correcta para temporal-sdk. 
-# El repo sdk-rust no contiene el paquete esperado en root.
+# temporal-sdk y temporal-sdk-core: requieren confirmar versiones del crate publicado.
+# Ver comentario FIXME en src/temporal/ para el estado actual.
 # temporal-sdk       = { git = "https://github.com/temporalio/sdk-core", branch = "master" }
 # temporal-sdk-core  = { git = "https://github.com/temporalio/sdk-core", branch = "master" }
+# uuid: se usará para generar IDs de Workflow al integrar Temporal.
 uuid               = { version = "1.0", features = ["v4", "fast-rng"] }
 
