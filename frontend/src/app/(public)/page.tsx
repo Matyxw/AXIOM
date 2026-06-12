@@ -4,12 +4,15 @@ import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { BorderBeam } from "@/components/ui/border-beam";
+import NumberTicker from "@/components/ui/number-ticker";
+import { MagneticButton } from "@/components/ui/magnetic-button";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
-// Aceternity/MagicUI Background Particles Component
+// Background Particles Component (Aceternity style)
 const Particles = () => {
   const container = useRef<HTMLDivElement>(null);
   
@@ -19,14 +22,14 @@ const Particles = () => {
     gsap.set(particles, {
       x: "random(0, 100vw)",
       y: "random(0, 100vh)",
-      opacity: "random(0.1, 0.5)",
+      opacity: "random(0.1, 0.4)",
       scale: "random(0.5, 1.5)",
     });
 
     gsap.to(particles, {
       y: "-=100vh",
-      x: "+=random(-100, 100)",
-      duration: "random(10, 20)",
+      x: "+=random(-50, 50)",
+      duration: "random(15, 25)",
       ease: "none",
       repeat: -1,
       modifiers: {
@@ -36,97 +39,48 @@ const Particles = () => {
   }, []);
 
   return (
-    <div ref={container} className="fixed inset-0 z-[1] pointer-events-none overflow-hidden mix-blend-screen opacity-40">
-      {[...Array(30)].map((_, i) => (
-        <div key={i} className="absolute w-1 h-1 bg-white rounded-full blur-[1px]"></div>
+    <div ref={container} className="fixed inset-0 z-[1] pointer-events-none overflow-hidden mix-blend-screen opacity-50">
+      {[...Array(40)].map((_, i) => (
+        <div key={i} className="absolute w-1 h-1 bg-indigo-400 rounded-full blur-[1px]"></div>
       ))}
     </div>
   );
 };
 
 export default function Home() {
-  const container = useRef<HTMLDivElement>(null);
-  const revenueRef = useRef<HTMLDivElement>(null);
-  
-  // --- STATE ---
-  const [leads, setLeads] = useState(100);
-  const [ticket, setTicket] = useState(500);
-  const lostRevenue = Math.floor(leads * 30 * 0.4) * ticket;
-
-  // --- NAVIGATION HANDLERS ---
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const scrollToTarget = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    e.preventDefault();
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  // MagicUI Number Ticker Effect
-  useEffect(() => {
-    if (revenueRef.current) {
-      gsap.to(revenueRef.current, {
-        innerHTML: lostRevenue,
-        duration: 0.8,
-        ease: "power2.out",
-        snap: { innerHTML: 1 },
-        onUpdate: function() {
-          const val = Math.round(Number(this.targets()[0].innerHTML));
-          this.targets()[0].innerHTML = `$${val.toLocaleString('en-US')}`;
-        }
-      });
-    }
-  }, [lostRevenue]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [leads, setLeads] = useState(250);
+  const [ticket, setTicket] = useState(1500);
+  const lostRevenue = Math.floor(leads * 0.4) * ticket;
 
   useGSAP(() => {
-    // 1. HERO ANIMATION
-    const tl = gsap.timeline();
-    
-    tl.to(".hero-nav", { y: 0, opacity: 1, duration: 1, ease: "power3.out" })
-      .from(".hero-badge", { opacity: 0, scale: 0.8, duration: 1, ease: "back.out(1.5)" }, "-=0.5")
-      .from(".hero-word", {
-        y: 60,
-        opacity: 0,
-        scale: 0.9,
-        stagger: 0.03,
-        duration: 1,
-        ease: "power4.out"
-      }, "-=0.6")
-      .from(".hero-desc", { opacity: 0, y: 20, duration: 1.5, ease: "power3.out" }, "-=0.6")
-      .from(".hero-btn", { opacity: 0, y: 10, scale: 0.95, duration: 1, ease: "power3.out" }, "-=0.8")
-      .from(".trusted-by", { opacity: 0, y: 10, duration: 1 }, "-=0.5");
-
-    gsap.to(".hero-content-wrapper", {
-      yPercent: 30,
+    // Scroll Reveals
+    gsap.from(".reveal-up", {
+      y: 50,
       opacity: 0,
-      ease: "none",
+      stagger: 0.1,
+      duration: 1,
+      ease: "power3.out",
       scrollTrigger: {
-        trigger: ".hero-section",
-        start: "top top",
-        end: "bottom top",
-        scrub: true
+        trigger: ".reveal-up-trigger",
+        start: "top 80%",
       }
     });
 
-    // 2. CHAT SIMULATOR 
-    gsap.fromTo(".chat-container", 
-      { y: 100, scale: 0.95, opacity: 0 },
-      { 
-        y: 0, scale: 1, opacity: 1, 
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".product-section",
-          start: "top 80%",
-          end: "center center",
-          scrub: 1
-        }
+    gsap.from(".bento-card", {
+      y: 80,
+      opacity: 0,
+      scale: 0.95,
+      stagger: 0.1,
+      duration: 1.2,
+      ease: "power4.out",
+      scrollTrigger: {
+        trigger: ".bento-trigger",
+        start: "top 75%",
       }
-    );
+    });
 
+    // Chat Simulator Animation
     const chatTl = gsap.timeline({
       scrollTrigger: {
         trigger: ".chat-container",
@@ -135,473 +89,367 @@ export default function Home() {
     });
 
     chatTl
-      .set(".chat-msg-1", { display: "flex" })
       .to(".chat-msg-1", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" })
-      
-      .addLabel("wait1", "+=0.6")
-      
-      .set(".typing-a-1", { display: "flex" }, "wait1")
-      .to(".typing-a-1", { opacity: 1, y: 0, duration: 0.3 })
-      
-      .addLabel("wait2", "+=1.8")
-      
-      .to(".typing-a-1", { opacity: 0, duration: 0.2 }, "wait2")
-      .set(".typing-a-1", { display: "none" })
-      
-      .set(".chat-msg-2", { display: "flex" })
+      .to(".typing-a-1", { opacity: 1, y: 0, duration: 0.3 }, "+=0.6")
+      .to(".typing-a-1", { opacity: 0, duration: 0.2 }, "+=1.8")
       .to(".chat-msg-2", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" })
-      
-      .addLabel("wait3", "+=1.0")
-      
-      .set(".typing-u-1", { display: "flex" }, "wait3")
-      .to(".typing-u-1", { opacity: 1, y: 0, duration: 0.3 })
-      
-      .addLabel("wait4", "+=1.5")
-      
-      .to(".typing-u-1", { opacity: 0, duration: 0.2 }, "wait4")
-      .set(".typing-u-1", { display: "none" })
-      
-      .set(".chat-msg-3", { display: "flex" })
+      .to(".terminal-log-1", { opacity: 1, x: 0, duration: 0.3 }, "-=0.2")
+      .to(".terminal-log-2", { opacity: 1, x: 0, duration: 0.3 }, "+=0.5")
+      .to(".terminal-log-3", { opacity: 1, x: 0, duration: 0.3 }, "+=0.2")
+      .to(".typing-u-1", { opacity: 1, y: 0, duration: 0.3 }, "+=1.0")
+      .to(".typing-u-1", { opacity: 0, duration: 0.2 }, "+=1.5")
       .to(".chat-msg-3", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" })
-      
-      .addLabel("wait5", "+=0.8")
-      
-      .set(".typing-a-2", { display: "flex" }, "wait5")
-      .to(".typing-a-2", { opacity: 1, y: 0, duration: 0.3 })
-      
-      .addLabel("wait6", "+=1.5")
-      
-      .to(".typing-a-2", { opacity: 0, duration: 0.2 }, "wait6")
-      .set(".typing-a-2", { display: "none" })
-      
-      .set(".chat-msg-4", { display: "flex" })
-      .to(".chat-msg-4", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+      .to(".terminal-log-4", { opacity: 1, x: 0, duration: 0.3 }, "-=0.2")
+      .to(".typing-a-2", { opacity: 1, y: 0, duration: 0.3 }, "+=0.8")
+      .to(".typing-a-2", { opacity: 0, duration: 0.2 }, "+=1.5")
+      .to(".chat-msg-4", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" })
+      .to(".terminal-log-5", { opacity: 1, x: 0, duration: 0.3 }, "-=0.2");
 
-    // 3. ARCHITECTURE BENTO 
-    gsap.from(".bento-item", {
-      scrollTrigger: {
-        trigger: ".architecture-section",
-        start: "top 70%",
-        end: "center center",
-        scrub: 1
-      },
-      y: 80,
-      opacity: 0,
-      scale: 0.95,
-      stagger: 0.1
-    });
-
-    // 4. ROI CALCULATOR
-    gsap.from(".roi-title > *", {
-      scrollTrigger: {
-        trigger: ".roi-section",
-        start: "top 75%",
-      },
-      y: 30,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 1,
-      ease: "power3.out"
-    });
-
-    gsap.to(".roi-box-wrapper", {
-      y: -30,
-      scrollTrigger: {
-        trigger: ".roi-section",
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1.5
-      }
-    });
-
-    // Tilt effect for ROI box
-    const roiBox = document.querySelector('.roi-tilt-card');
-    const roiGlare = document.querySelector('.roi-glare');
-    if (roiBox && roiGlare) {
-      roiBox.addEventListener('mousemove', (e: any) => {
-        const rect = roiBox.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = ((y - centerY) / centerY) * -8;
-        const rotateY = ((x - centerX) / centerX) * 8;
-        
-        gsap.to(roiBox, {
-          rotateX,
-          rotateY,
-          ease: "power2.out",
-          duration: 0.4
-        });
-        
-        gsap.to(roiGlare, {
-          x: x - rect.width / 2,
-          y: y - rect.height / 2,
-          opacity: 1,
-          ease: "power2.out",
-          duration: 0.4
-        });
-      });
-      
-      roiBox.addEventListener('mouseleave', () => {
-        gsap.to(roiBox, {
-          rotateX: 0,
-          rotateY: 0,
-          ease: "power2.out",
-          duration: 0.8
-        });
-        
-        gsap.to(roiGlare, {
-          x: 0,
-          y: 0,
-          opacity: 0,
-          ease: "power2.out",
-          duration: 0.8
-        });
-      });
-    }
-
-    // 5. TESTIMONIAL
-    gsap.from(".testimonial-card", {
-      scrollTrigger: {
-        trigger: ".testimonial-section",
-        start: "top 70%",
-        end: "center center",
-        scrub: 1
-      },
-      scale: 0.95,
-      y: 40,
-      opacity: 0
-    });
-
-    // Magnetic Button Effect setup
-    const buttons = document.querySelectorAll('.magnetic-btn');
-    buttons.forEach(btn => {
-      btn.addEventListener('mousemove', (e: any) => {
-        const rect = btn.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width/2) * 0.3;
-        const y = (e.clientY - rect.top - rect.height/2) * 0.3;
-        gsap.to(btn, { x, y, duration: 0.3, ease: "power2.out" });
-      });
-      btn.addEventListener('mouseleave', () => {
-        gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
-      });
-    });
-
-  }, { scope: container });
-
-  const splitText = (text: string, isGradient: boolean = false) => {
-    return text.split(" ").map((word, i) => (
-      <span key={i} className="inline-block overflow-hidden pb-2 align-bottom">
-        <span className={`hero-word inline-block origin-bottom ${isGradient ? 'text-transparent bg-clip-text bg-gradient-to-br from-white to-neutral-500' : 'text-white'}`}>
-          {word}&nbsp;
-        </span>
-      </span>
-    ));
-  };
+  }, { scope: containerRef });
 
   return (
-    <main ref={container} className="bg-[#000000] text-[#ededed] font-sans overflow-x-hidden selection:bg-neutral-800 selection:text-white relative">
-      
+    <main
+      ref={containerRef}
+      className="min-h-screen bg-black text-[#ededed] font-sans overflow-x-hidden selection:bg-indigo-500/30"
+    >
       <Particles />
-      <div className="fixed inset-0 z-0 pointer-events-none flex justify-center items-start overflow-hidden">
-        <div className="absolute top-[-20%] w-[100vw] h-[60vw] bg-white/[0.015] rounded-[100%] blur-[120px]"></div>
+
+      {/* GLOBAL BACKGROUND ELEMENTS */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:64px_64px] mix-blend-screen" style={{ maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 100%)' }}></div>
+        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80vw] h-[60vw] bg-indigo-500/[0.04] rounded-[100%] blur-[120px]"></div>
       </div>
-      <div className="fixed inset-0 z-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none mix-blend-screen" style={{ maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)' }}></div>
-      
-      <nav className="hero-nav opacity-0 -translate-y-5 fixed top-0 z-50 w-full border-b border-white/[0.04] bg-[#000000]/60 backdrop-blur-md">
+
+      {/* --- NAVBAR --- */}
+      <nav className="fixed top-0 z-50 w-full border-b border-white/[0.04] bg-[#000000]/60 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          {/* Logo - Scroll to Top */}
-          <div onClick={scrollToTop} className="font-semibold tracking-tight text-[14px] flex items-center gap-2 text-white cursor-pointer hover:scale-105 transition-transform duration-300">
-            <div className="w-3.5 h-3.5 bg-gradient-to-br from-white to-neutral-400 rounded-[3px] shadow-[0_0_10px_rgba(255,255,255,0.2)]"></div>
-            AXIOM
+          <div className="flex items-center gap-2 cursor-pointer group">
+            <div className="w-4 h-4 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-sm shadow-[0_0_15px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.6)] transition-shadow"></div>
+            <span className="font-semibold tracking-wide text-[13px] text-white">AXIOM</span>
           </div>
-          {/* Action Link - Scroll to Form */}
-          <a href="#contact" onClick={(e) => scrollToTarget(e, 'contact')} className="text-[13px] font-medium text-neutral-300 hover:text-white transition-colors">
-            Solicitar Acceso
-          </a>
+          <div className="hidden md:flex items-center gap-8 text-[13px] font-medium text-neutral-400">
+            <a href="#architecture" className="hover:text-white transition-colors">Infraestructura</a>
+            <a href="#simulator" className="hover:text-white transition-colors">Motor</a>
+            <a href="#roi" className="hover:text-white transition-colors">ROI</a>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="/dashboard" className="text-[13px] font-medium text-neutral-400 hover:text-white transition-colors">Login</a>
+            <MagneticButton>
+              <a href="#contact" className="block text-[12px] font-medium bg-white text-black px-4 py-1.5 rounded-full hover:bg-neutral-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                Solicitar Acceso
+              </a>
+            </MagneticButton>
+          </div>
         </div>
       </nav>
 
-      <section className="hero-section relative w-full min-h-screen flex flex-col justify-center items-center overflow-hidden pt-20 pb-10 z-10">
-        <div className="hero-content-wrapper w-full max-w-5xl mx-auto px-6 flex flex-col items-center text-center">
-          
-          <div className="hero-badge inline-flex items-center rounded-md border border-white/[0.08] bg-white/[0.02] shadow-[inset_0_0_10px_rgba(255,255,255,0.02)] backdrop-blur-sm px-3 py-1.5 text-[12px] font-medium text-neutral-400 mb-8 cursor-default hover:bg-white/[0.05] transition-colors duration-500">
-            Agentes de conversión B2B
-          </div>
-          
-          <h1 className="text-6xl md:text-[88px] font-medium tracking-tight mb-6 leading-[1.05] flex flex-wrap justify-center max-w-4xl">
-            {splitText("El costo oculto de")}
-            <br className="hidden md:block"/>
-            {splitText("las horas no laborables.", true)}
-          </h1>
-          
-          <p className="hero-desc text-[17px] md:text-[19px] text-neutral-400 max-w-2xl mb-12 leading-relaxed font-light">
-            Tus clientes toman decisiones a las 22:00hs. Tu equipo atiende a las 09:00hs. AXIOM cubre la brecha: un motor en Rust que agenda y cobra 24/7.
-          </p>
-          
-          <div className="hero-btn flex flex-col sm:flex-row items-center gap-4 mb-20 z-20 relative">
-            <a href="#roi" onClick={(e) => scrollToTarget(e, 'roi')} className="magnetic-btn relative overflow-hidden rounded-lg bg-white text-black text-[14px] font-semibold px-8 py-3.5 hover:bg-neutral-200 transition-all shadow-[0_0_30px_-5px_rgba(255,255,255,0.4)] flex items-center gap-2 group">
-              <span className="relative z-10 flex items-center gap-2">
-                Ver métricas de fuga
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-              </span>
-            </a>
-          </div>
-
-          <div className="trusted-by w-full max-w-3xl border-t border-white/[0.04] pt-8 mt-4 overflow-hidden relative">
-            <p className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase mb-6 text-left">Auditado e implementado por empresas líderes</p>
-            <div className="flex gap-12 items-center opacity-40 mix-blend-screen grayscale">
-              <div className="text-xl font-black tracking-tighter hover:text-white transition-colors duration-500 cursor-default">ACME.CORP</div>
-              <div className="text-xl font-serif italic hover:text-white transition-colors duration-500 cursor-default">NovaGlobal</div>
-              <div className="text-xl font-bold uppercase tracking-widest hover:text-white transition-colors duration-500 cursor-default">Stratos</div>
-              <div className="text-xl font-mono hover:text-white transition-colors duration-500 cursor-default">/OASIS</div>
-              <div className="text-xl font-medium tracking-tight hover:text-white transition-colors duration-500 cursor-default">LUMINA</div>
-            </div>
-          </div>
-
+      {/* --- HERO SECTION --- */}
+      <section className="relative z-10 w-full pt-48 pb-24 flex flex-col items-center justify-center text-center px-6">
+        <div className="inline-flex items-center rounded-full border border-indigo-500/20 bg-indigo-500/5 px-3 py-1 text-[12px] font-medium text-indigo-300 mb-8 backdrop-blur-sm shadow-[inset_0_0_15px_rgba(99,102,241,0.05)]">
+          <span className="flex w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2 animate-pulse"></span>
+          Orquestación Autónoma de Ventas B2B
         </div>
-      </section>
-
-      <section id="product" className="product-section relative z-20 w-full min-h-screen flex flex-col items-center justify-center py-20">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none"></div>
-
-        <div className="w-full max-w-5xl mx-auto px-6 relative">
-          <div className="chat-container relative w-full rounded-2xl border border-white/[0.08] bg-[#050505]/80 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] overflow-hidden flex flex-col">
-            
-            <div className="h-12 border-b border-white/[0.04] bg-white/[0.01] flex items-center justify-between px-5 relative z-10">
-              <div className="flex gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-neutral-700/50"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-neutral-700/50"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-neutral-700/50"></div>
-              </div>
-              <div className="text-[11px] font-mono tracking-widest text-neutral-500 uppercase">Log: axiom_runtime_p0</div>
-              <div className="w-10"></div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 h-auto min-h-[500px] relative z-10 bg-transparent">
-              <div className="hidden md:flex flex-col border-r border-white/[0.04] bg-[#020202]/50 p-6 col-span-1 text-[12px]">
-                <div className="text-[10px] font-mono text-neutral-600 mb-3 uppercase tracking-widest">Profile</div>
-                <div className="text-neutral-300 mb-2 flex items-center justify-between"><span>Origin</span> <span className="text-neutral-500">IG_AD</span></div>
-                <div className="text-neutral-300 mb-2 flex items-center justify-between"><span>Score</span> <span className="text-emerald-400">89/100</span></div>
-                <div className="text-neutral-300 mb-8 flex items-center justify-between"><span>Time</span> <span className="text-neutral-500">23:45</span></div>
-                
-                <div className="text-[10px] font-mono text-neutral-600 mb-3 uppercase tracking-widest">Execution</div>
-                <div className="text-neutral-300 mb-2 flex items-center justify-between"><span>Tactic</span> <span className="text-neutral-500">Bypass</span></div>
-                <div className="text-neutral-300 mb-2 flex items-center justify-between"><span>Status</span> <span className="text-white flex items-center gap-2"><span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> Active</span></div>
-              </div>
-              
-              <div className="col-span-1 md:col-span-3 flex flex-col justify-end p-8 bg-transparent relative overflow-hidden">
-                <div className="relative z-10 flex flex-col gap-6 max-w-xl text-[14px] font-sans">
-                  
-                  <div className="chat-msg-1 hidden opacity-0 translate-y-4 items-start gap-4">
-                    <div className="w-7 h-7 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[11px] text-neutral-400 shrink-0 shadow-sm">U</div>
-                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-5 py-3.5 leading-relaxed font-light shadow-sm">
-                      El servicio se ve bien, pero $3,500 de setup me parece elevado en comparación con otras propuestas. Lo vamos a pensar.
-                    </div>
-                  </div>
-                  
-                  <div className="typing-a-1 hidden opacity-0 translate-y-4 items-start gap-4">
-                    <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.2)]">A</div>
-                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm flex items-center gap-1.5 h-[38px]">
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                    </div>
-                  </div>
-
-                  <div className="chat-msg-2 hidden opacity-0 translate-y-4 items-start gap-4">
-                    <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.2)]">A</div>
-                    <div className="text-neutral-200 px-1 py-1 leading-relaxed font-light">
-                      Entiendo perfectamente. Es importante aclarar que nuestra infraestructura reduce el tiempo de implementación de 3 meses a 1 semana. <br/><br/>
-                      Al priorizar calidad, solo admitimos a dos clientes nuevos este mes y cerramos cupos mañana a primera hora. ¿Deseas que genere el enlace de pago para asegurar el espacio de tu empresa, o prefieres dejarlo pasar?
-                    </div>
-                  </div>
-                  
-                  <div className="typing-u-1 hidden opacity-0 translate-y-4 items-start gap-4">
-                    <div className="w-7 h-7 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[11px] text-neutral-400 shrink-0 shadow-sm">U</div>
-                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm flex items-center gap-1.5 h-[38px]">
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                    </div>
-                  </div>
-
-                  <div className="chat-msg-3 hidden opacity-0 translate-y-4 items-start gap-4">
-                    <div className="w-7 h-7 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[11px] text-neutral-400 shrink-0 shadow-sm">U</div>
-                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-5 py-3.5 leading-relaxed font-light shadow-sm">
-                      Es un buen punto lo de los tiempos. Mandame el link de pago y lo cerramos hoy mismo.
-                    </div>
-                  </div>
-
-                  <div className="typing-a-2 hidden opacity-0 translate-y-4 items-start gap-4">
-                    <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.2)]">A</div>
-                    <div className="bg-[#111111]/80 border border-white/[0.04] text-neutral-300 rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-sm flex items-center gap-1.5 h-[38px]">
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                    </div>
-                  </div>
-
-                  <div className="chat-msg-4 hidden opacity-0 translate-y-4 items-start gap-4 pb-2">
-                    <div className="w-7 h-7 rounded-md bg-white border border-white flex items-center justify-center text-[11px] text-black font-semibold shrink-0">A</div>
-                    <div className="text-neutral-200 px-1 py-1 flex flex-col gap-3 font-light">
-                      Decisión acertada. Aquí tienes el enlace de facturación segura.
-                      <div className="chat-action relative overflow-hidden inline-flex items-center gap-3 border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.1] transition-colors rounded-xl px-5 py-3.5 text-[13px] text-white mt-2 w-fit cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] group">
-                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]"></span>
-                        <svg className="relative z-10" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
-                        <span className="relative z-10">Pago de Setup ($3,500.00 USD)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="architecture-section relative z-30 w-full min-h-screen flex flex-col items-center justify-center py-20 bg-[#000000]">
-        <div className="max-w-5xl mx-auto px-6 w-full">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white">Ingeniería implacable, no simples prompts.</h2>
-            <p className="text-neutral-400 text-[16px] mt-4 font-light">Diseñado nativamente para tolerancia a fallos y retención de memoria a largo plazo.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bento-item bg-[#050505] border border-white/[0.05] rounded-2xl p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-              <div className="w-10 h-10 rounded-lg bg-white/[0.05] border border-white/[0.05] flex items-center justify-center mb-6">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              </div>
-              <h3 className="text-white text-[16px] font-medium mb-2">Motor en Rust</h3>
-              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">Concurrencia extrema. 0 pausas de recolección de basura. Respuestas en milisegundos bajo picos masivos de tráfico.</p>
-            </div>
-            
-            <div className="bento-item bg-[#050505] border border-white/[0.05] rounded-2xl p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-              <div className="w-10 h-10 rounded-lg bg-white/[0.05] border border-white/[0.05] flex items-center justify-center mb-6">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              </div>
-              <h3 className="text-white text-[16px] font-medium mb-2">Orquestación Temporal</h3>
-              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">Persistencia de estado. Si Meta o los LLMs colapsan, la transacción se congela y retoma exacto donde quedó. Cero ventas perdidas.</p>
-            </div>
-            
-            <div className="bento-item bg-[#050505] border border-white/[0.05] rounded-2xl p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] relative overflow-hidden">
-              <div className="w-10 h-10 rounded-lg bg-white/[0.05] border border-white/[0.05] flex items-center justify-center mb-6 relative z-10">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
-              </div>
-              <h3 className="text-white text-[16px] font-medium mb-2 relative z-10">Aislamiento Criptográfico</h3>
-              <p className="text-neutral-500 text-[14px] font-light leading-relaxed relative z-10">Seguridad B2B. Sus datos comerciales, prompts y leads están aislados por namespace mediante SurrealDB.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="roi" className="roi-section relative z-40 w-full min-h-screen border-y border-white/[0.03] flex flex-col items-center justify-center py-20 overflow-hidden bg-[#020202]">
-        <div className="max-w-6xl mx-auto px-6 w-full">
-          <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
-            <div className="roi-title flex-1 w-full">
-              <h2 className="text-4xl md:text-[48px] font-medium tracking-tight text-white mb-6 leading-[1.1]">
-                Cuantificando la pérdida <br/><span className="text-neutral-500">de oportunidades.</span>
-              </h2>
-              <p className="text-neutral-400 text-[17px] leading-relaxed mb-12 max-w-lg font-light">
-                Basado en datos de la industria, el 40% de los leads originados en campañas digitales se enfrían por falta de seguimiento inmediato.
-              </p>
-              
-              <div className="flex flex-col gap-10 max-w-lg">
-                <div className="flex flex-col gap-4">
-                  <div className="flex justify-between items-end">
-                    <label className="text-[12px] text-neutral-400 font-medium uppercase tracking-widest">Volumen Mensual</label>
-                    <span className="text-[14px] font-mono text-white bg-neutral-900 px-3 py-1 rounded-md border border-white/10">{leads * 30} leads</span>
-                  </div>
-                  <input type="range" min="10" max="1000" step="10" value={leads} onChange={(e) => setLeads(Number(e.target.value))} className="w-full h-[2px] bg-neutral-800 rounded-none appearance-none cursor-pointer accent-white"/>
-                </div>
-                
-                <div className="flex flex-col gap-4">
-                  <div className="flex justify-between items-end">
-                    <label className="text-[12px] text-neutral-400 font-medium uppercase tracking-widest">Ticket Promedio</label>
-                    <span className="text-[14px] font-mono text-white bg-neutral-900 px-3 py-1 rounded-md border border-white/10">${ticket.toLocaleString('en-US')}</span>
-                  </div>
-                  <input type="range" min="100" max="10000" step="100" value={ticket} onChange={(e) => setTicket(Number(e.target.value))} className="w-full h-[2px] bg-neutral-800 rounded-none appearance-none cursor-pointer accent-white"/>
-                </div>
-              </div>
-            </div>
-
-            <div className="roi-box-wrapper w-full lg:w-[480px]" style={{ perspective: '1000px' }}>
-              <div className="roi-tilt-card w-full bg-[#050505]/80 backdrop-blur-md border border-white/[0.08] rounded-2xl p-10 relative overflow-hidden shadow-[0_0_50px_rgba(255,255,255,0.02),inset_0_1px_0_rgba(255,255,255,0.05)]" style={{ transformStyle: 'preserve-3d' }}>
-                <div className="roi-glare absolute top-1/2 left-1/2 w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_50%)] pointer-events-none opacity-0 mix-blend-screen -translate-x-1/2 -translate-y-1/2 z-20"></div>
-                
-                <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.04)_0%,transparent_50%)] pointer-events-none"></div>
-                
-                <h3 className="text-neutral-500 text-[11px] font-mono mb-4 uppercase tracking-[0.15em] relative z-10" style={{ transform: 'translateZ(20px)' }}>Fuga de Capital (Mensual)</h3>
-                
-                <div ref={revenueRef} className="text-[56px] font-medium text-white tracking-tight mb-8 leading-none relative z-10" style={{ transform: 'translateZ(40px)' }}>
-                  ${lostRevenue.toLocaleString('en-US')}
-                </div>
-                
-                <div className="w-full h-[1px] bg-gradient-to-r from-white/[0.1] to-transparent my-6 relative z-10" style={{ transform: 'translateZ(20px)' }}></div>
-                
-                <p className="text-[14px] text-neutral-400 leading-relaxed font-light relative z-10" style={{ transform: 'translateZ(30px)' }}>
-                  Este es el capital que no ingresa a tu empresa por demoras. <strong className="text-white font-normal">AXIOM absorbe esta cuota</strong> interactuando con tus clientes de forma nativa e instantánea.
-                </p>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </section>
-
-      <section className="testimonial-section relative z-50 w-full min-h-screen flex flex-col items-center justify-center py-20 bg-[#000000] overflow-hidden">
-        <div className="max-w-4xl mx-auto px-6 w-full">
-          <div className="testimonial-card relative bg-[#020202] border border-white/[0.05] rounded-3xl p-10 md:p-16 text-center shadow-[inset_0_0_100px_rgba(255,255,255,0.02)] overflow-hidden">
-            
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.03)_0%,transparent_80%)] pointer-events-none"></div>
-
-            <svg className="absolute top-8 left-8 text-neutral-800 w-12 h-12 opacity-50" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-            <p className="text-[20px] md:text-[24px] font-light text-neutral-300 leading-relaxed mb-8 relative z-10">
-              "Teníamos un embudo roto. Nuestros vendedores tardaban 2 horas en responder consultas de $5,000 USD. Implementamos AXIOM y en el primer mes <strong className="text-white font-medium">recuperamos $65,000 que antes se perdían por demoras nocturnas.</strong> No es un bot, es infraestructura crítica comercial."
-            </p>
-            <div className="flex flex-col items-center relative z-10">
-              <div className="w-12 h-12 rounded-full bg-neutral-800 border border-white/10 mb-3 flex items-center justify-center text-[12px] text-white">RC</div>
-              <div className="text-[14px] font-medium text-white">Roberto C.</div>
-              <div className="text-[12px] text-neutral-500 font-mono mt-1">CEO @ Stratos Consulting</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="cta-section relative w-full min-h-screen flex flex-col items-center justify-center bg-[#050505] overflow-hidden border-t border-white/[0.03] py-20 z-[60]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.02)_0%,transparent_60%)] pointer-events-none"></div>
         
-        <div className="cta-content max-w-2xl mx-auto px-6 text-center flex flex-col items-center relative z-10 w-full">
-          
-          <h2 className="text-4xl md:text-[56px] font-medium tracking-tight text-white mb-6">
-            Implementación Selectiva.
-          </h2>
-          
-          <p className="text-neutral-400 text-[17px] mb-12 max-w-lg leading-relaxed font-light">
-            Para mantener el estándar de calidad, habilitamos infraestructura dedicada solo para un número controlado de organizaciones.
-          </p>
-          
-          <form className="flex flex-col sm:flex-row gap-3 w-full justify-center max-w-md group" onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder="Correo Corporativo" className="flex-1 w-full bg-[#000000] border border-white/[0.1] shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)] rounded-lg px-5 py-4 text-[14px] text-white focus:outline-none focus:border-white/[0.3] transition-all" />
-            <button type="submit" className="magnetic-btn w-full sm:w-auto bg-white text-black font-semibold px-8 py-4 rounded-lg text-[14px] hover:bg-neutral-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-              Solicitar Evaluación
-            </button>
-          </form>
-          
-          <p className="text-[12px] text-neutral-500 mt-8 max-w-sm leading-relaxed font-light">
-            Analizaremos la escalabilidad técnica de sus operaciones previo a la agendación de la sesión.
-          </p>
+        <h1 className="text-5xl md:text-[80px] font-medium tracking-tight mb-6 leading-[1.05] max-w-5xl">
+          El costo oculto de las <br className="hidden md:block" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-b from-indigo-300 via-white to-neutral-400">
+            horas no laborables.
+          </span>
+        </h1>
+        
+        <p className="text-[17px] md:text-[20px] text-neutral-400 max-w-2xl mb-10 leading-relaxed font-light">
+          Infraestructura de ingeniería dura para cerrar ventas mientras duermes. Tus clientes compran a las 23:00hs, AXIOM les vende en 1.2 segundos.
+        </p>
+        
+        <div className="flex items-center justify-center relative group">
+          <div className="absolute inset-0 bg-indigo-500 opacity-20 blur-xl group-hover:opacity-40 transition-opacity duration-500 rounded-full pointer-events-none"></div>
+          <MagneticButton>
+            <a href="#contact" className="block relative z-10 bg-white text-black text-[14px] font-medium px-8 py-3.5 rounded-full hover:bg-neutral-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+              Evaluar Escalabilidad
+            </a>
+          </MagneticButton>
         </div>
       </section>
-      
-      <footer className="w-full border-t border-white/[0.03] bg-black py-8 flex justify-center relative z-[70]">
+
+      {/* --- HERO 3D MOCKUP (WITH BORDER BEAM & BUSINESS COPY) --- */}
+      <section className="relative z-20 w-full pb-40 flex justify-center px-6 perspective-[2000px]">
+        <div className="relative w-full max-w-5xl h-[300px] md:h-[500px] border border-white/[0.05] bg-[#020202]/80 backdrop-blur-2xl rounded-2xl md:rounded-3xl shadow-[0_40px_100px_-20px_rgba(99,102,241,0.15)] overflow-hidden transform rotate-x-[12deg] rotate-y-[-2deg] rotate-z-[1deg] hover:rotate-x-0 hover:rotate-y-0 hover:rotate-z-0 transition-transform duration-1000 ease-out group">
+          
+          <BorderBeam size={300} duration={12} delay={9} colorFrom="#818cf8" colorTo="#c084fc" />
+
+          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/[0.02] to-transparent"></div>
+          <div className="h-12 border-b border-white/[0.04] bg-white/[0.01] flex items-center px-4 md:px-6 gap-4">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-neutral-700"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-neutral-700"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-neutral-700"></div>
+            </div>
+            <div className="flex-1 flex justify-center">
+              <div className="w-48 md:w-64 h-6 bg-white/[0.03] border border-white/[0.04] rounded flex items-center justify-center text-[10px] text-neutral-500 font-mono tracking-widest">AXIOM_REVENUE_DASHBOARD</div>
+            </div>
+            <div className="w-[34px]"></div>
+          </div>
+
+          <div className="p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 h-full">
+            <div className="col-span-1 md:col-span-2 flex flex-col gap-4 md:gap-6">
+              <div className="flex-1 bg-white/[0.02] border border-white/[0.03] rounded-xl relative overflow-hidden group-hover:border-indigo-500/20 transition-colors duration-700 p-6 flex flex-col">
+                <div className="text-[12px] font-mono text-neutral-400 mb-6 uppercase tracking-widest">Leads Rescatados Fuera de Horario</div>
+                <div className="w-full flex-1 flex items-end justify-between px-2 pb-6 relative">
+                  {[{d:'L',v:4}, {d:'M',v:6}, {d:'M',v:3}, {d:'J',v:8}, {d:'V',v:5}, {d:'S',v:9}, {d:'D',v:7}].map((item, i) => (
+                    <div key={i} className="w-[10%] bg-indigo-500/30 rounded-t-sm relative group-hover:bg-indigo-500/50 transition-colors flex flex-col items-center justify-start" style={{ height: `${item.v * 10}%` }}>
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.8)]"></div>
+                      <span className="absolute -top-6 text-[10px] text-white font-mono opacity-0 group-hover:opacity-100 transition-opacity">+{item.v}</span>
+                      <span className="absolute -bottom-6 text-[10px] text-neutral-500 font-mono">{item.d}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="hidden md:flex col-span-1 flex-col gap-6">
+               <div className="flex-1 bg-white/[0.02] border border-white/[0.03] rounded-xl p-6 flex flex-col justify-center">
+                 <div className="text-[11px] font-mono text-neutral-500 mb-2 uppercase">Tiempo Promedio de Respuesta</div>
+                 <div className="text-4xl text-white font-medium">1.2<span className="text-lg text-neutral-500 ml-1">segundos</span></div>
+                 <div className="text-[12px] text-emerald-400 mt-2 flex items-center gap-1">
+                   <span>↓ 98% más rápido que humanos</span>
+                 </div>
+               </div>
+               <div className="flex-1 bg-white/[0.02] border border-white/[0.03] rounded-xl p-6">
+                  <div className="text-[11px] font-mono text-neutral-500 mb-4 uppercase">Capital Recuperado</div>
+                  <div className="text-3xl text-white font-medium flex items-center gap-2">
+                    $<NumberTicker value={65400} />
+                  </div>
+                  <div className="w-full bg-white/[0.05] h-1.5 rounded-full mt-4 overflow-hidden">
+                    <div className="bg-gradient-to-r from-indigo-500 to-purple-500 w-3/4 h-full"></div>
+                  </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- INTEGRATIONS BAR --- */}
+      <section className="relative z-10 w-full pb-32 mt-16">
+        <div className="max-w-6xl mx-auto px-6 text-center border-y border-white/[0.04] py-10 bg-white/[0.01]">
+          <p className="text-[11px] text-neutral-500 font-mono tracking-widest uppercase mb-8">Integración Nativa Sin Fricción</p>
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 hover:opacity-100 transition-opacity duration-700">
+            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-green-500">W</span> WhatsApp</div>
+            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-blue-500">C</span> Calendly</div>
+            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-purple-500">S</span> SurrealDB</div>
+            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-orange-500">T</span> Temporal</div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- ARCHITECTURE BENTO GRID --- */}
+      <section id="architecture" className="bento-trigger relative z-10 w-full py-32 bg-black">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="mb-16 max-w-2xl reveal-up">
+            <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white mb-4">Ingeniería que no pide disculpas.</h2>
+            <p className="text-neutral-400 text-[16px] font-light leading-relaxed">
+              No somos un wrapper glorificado de OpenAI. Construimos el backend con los mismos lenguajes y bases de datos que soportan la infraestructura global moderna.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bento-card bg-[#050505] border border-white/[0.06] rounded-2xl p-8 hover:bg-[#080808] transition-colors relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-[50px] group-hover:bg-orange-500/10 transition-colors"></div>
+              <div className="w-10 h-10 border border-white/10 bg-white/[0.02] rounded-lg mb-6 flex items-center justify-center text-orange-400 font-mono text-[10px]">.rs</div>
+              <h3 className="text-lg font-medium text-white mb-3">Motor en Rust</h3>
+              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">
+                Concurrencia extrema. 0 pausas de recolección de basura. Respuestas en milisegundos bajo picos masivos de tráfico.
+              </p>
+            </div>
+            
+            <div className="bento-card bg-[#050505] border border-white/[0.06] rounded-2xl p-8 hover:bg-[#080808] transition-colors relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-[50px] group-hover:bg-blue-500/10 transition-colors"></div>
+              <div className="w-10 h-10 border border-white/10 bg-white/[0.02] rounded-lg mb-6 flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-blue-400 rounded-full border-t-transparent animate-spin"></div>
+              </div>
+              <h3 className="text-lg font-medium text-white mb-3">Temporal.io</h3>
+              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">
+                Ejecución duradera. Si un servicio externo colapsa, la transacción se congela y retoma donde quedó. Cero ventas perdidas.
+              </p>
+            </div>
+
+            <div className="bento-card bg-[#050505] border border-white/[0.06] rounded-2xl p-8 hover:bg-[#080808] transition-colors relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 blur-[50px] group-hover:bg-purple-500/10 transition-colors"></div>
+              <div className="w-10 h-10 border border-white/10 bg-white/[0.02] rounded-lg mb-6 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-purple-400" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              </div>
+              <h3 className="text-lg font-medium text-white mb-3">Aislamiento por Tenant</h3>
+              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">
+                Tus datos, prompts y leads están aislados criptográficamente por Namespace en SurrealDB. Seguridad B2B nivel banco.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- HYBRID SIMULATOR (CHAT + TERMINAL) --- */}
+      <section id="simulator" className="relative z-10 w-full py-32 bg-[#020202] border-y border-white/[0.04] overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="mb-16 max-w-2xl text-center mx-auto">
+            <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white mb-6">Velocidad táctica en el punto de contacto.</h2>
+            <p className="text-neutral-400 text-[16px] font-light leading-relaxed">
+              La magia a la izquierda, la ingeniería a la derecha. Así es como AXIOM intercepta un lead a las 3:00 AM y despacha un cierre de ventas en menos de 2 segundos.
+            </p>
+          </div>
+          
+          <div className="chat-container flex flex-col lg:flex-row gap-6 items-stretch h-auto lg:min-h-[480px]">
+            {/* WHATSAPP CHAT */}
+            <div className="flex-1 bg-[#050505] border border-white/[0.08] rounded-xl p-6 relative overflow-hidden flex flex-col">
+              <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest mb-6 pb-4 border-b border-white/[0.04]">Simulación Frontend (WhatsApp)</div>
+              
+              <div className="flex-1 flex flex-col justify-end gap-4 text-[13px]">
+                <div className="chat-msg-1 opacity-0 translate-y-4 flex items-start gap-3">
+                  <div className="w-6 h-6 rounded bg-neutral-800 flex items-center justify-center shrink-0">U</div>
+                  <div className="bg-[#111] text-neutral-300 rounded-xl rounded-tl-none p-3 border border-white/[0.04]">
+                    Tienen disponibilidad para implementar en una empresa de 50 empleados esta semana?
+                  </div>
+                </div>
+                
+                <div className="typing-a-1 opacity-0 flex items-center gap-2 text-neutral-500 bg-[#111] w-fit p-2 rounded-xl rounded-tl-none border border-white/[0.04]">
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
+                </div>
+
+                <div className="chat-msg-2 opacity-0 translate-y-4 flex items-start gap-3">
+                  <div className="w-6 h-6 rounded bg-indigo-500 text-white flex items-center justify-center shrink-0">A</div>
+                  <div className="bg-indigo-500/10 text-indigo-100 rounded-xl rounded-tl-none p-3 border border-indigo-500/20">
+                    Sí, tenemos un bloque de implementación libre el jueves. Para 50 empleados, el plan Enterprise cubre todo. Te genero el link de reserva?
+                  </div>
+                </div>
+
+                <div className="typing-u-1 opacity-0 flex items-center gap-2 text-neutral-500 bg-[#111] w-fit p-2 rounded-xl rounded-tl-none border border-white/[0.04]">
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
+                </div>
+
+                <div className="chat-msg-3 opacity-0 translate-y-4 flex items-start gap-3">
+                  <div className="w-6 h-6 rounded bg-neutral-800 flex items-center justify-center shrink-0">U</div>
+                  <div className="bg-[#111] text-neutral-300 rounded-xl rounded-tl-none p-3 border border-white/[0.04]">
+                    Perfecto, pasámelo.
+                  </div>
+                </div>
+
+                <div className="typing-a-2 opacity-0 flex items-center gap-2 text-neutral-500 bg-[#111] w-fit p-2 rounded-xl rounded-tl-none border border-white/[0.04]">
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
+                </div>
+
+                <div className="chat-msg-4 opacity-0 translate-y-4 flex items-start gap-3">
+                  <div className="w-6 h-6 rounded bg-indigo-500 text-white flex items-center justify-center shrink-0">A</div>
+                  <div className="bg-indigo-500/10 text-indigo-100 rounded-xl rounded-tl-none p-3 border border-indigo-500/20 flex flex-col gap-2">
+                    Listo. Aquí tienes tu acceso exclusivo para agendar el Setup:
+                    <div className="bg-black/50 border border-white/10 rounded p-2 text-center hover:bg-white/5 cursor-pointer transition-colors text-blue-400">
+                      🗓️ Agendar en Calendly
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* TERMINAL LOG */}
+            <div className="flex-1 bg-[#050505] border border-white/[0.08] rounded-xl p-6 relative overflow-hidden flex flex-col font-mono text-[11px] md:text-[12px]">
+              <div className="text-[10px] text-neutral-500 uppercase tracking-widest mb-6 pb-4 border-b border-white/[0.04]">Infraestructura Backend (Rust)</div>
+              
+              <div className="flex-1 flex flex-col justify-end gap-2 text-neutral-400">
+                <div className="terminal-log-1 opacity-0 -translate-x-4 flex gap-3"><span className="text-emerald-400">RECV</span><span>POST /webhook/meta (wamid_12x98y)</span></div>
+                <div className="terminal-log-2 opacity-0 -translate-x-4 flex gap-3"><span className="text-blue-400">EXEC</span><span>Verify HMAC-SHA256: OK (0.1ms)</span></div>
+                <div className="terminal-log-3 opacity-0 -translate-x-4 flex gap-3"><span className="text-purple-400">SPWN</span><span>Temporal Workflow: Start IntentAnalyzer</span></div>
+                <div className="terminal-log-4 opacity-0 -translate-x-4 flex gap-3"><span className="text-indigo-400">RAG </span><span>Context: "Enterprise Plan / 50 seats"</span></div>
+                <div className="terminal-log-5 opacity-0 -translate-x-4 flex gap-3 text-white"><span className="text-emerald-500">DONE</span><span>Booking Link Generated. Latency: 1.22s</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- MINIMALIST ROI CALCULATOR --- */}
+      <section id="roi" className="relative z-10 w-full py-32 bg-black">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white mb-4">Calcula la fuga de capital.</h2>
+          <p className="text-neutral-400 text-[16px] font-light leading-relaxed mb-16">
+            El 40% de los leads se enfrían por falta de seguimiento. Mueve los controles para ver el impacto en tu facturación.
+          </p>
+
+          <div className="bg-[#050505] border border-white/[0.08] rounded-2xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row gap-12 items-center">
+            
+            <div className="flex-1 w-full flex flex-col gap-10 text-left">
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-end">
+                  <label className="text-[11px] text-neutral-500 font-mono uppercase tracking-widest">Leads Mensuales</label>
+                  <span className="text-[14px] font-mono text-white bg-white/[0.05] border border-white/10 px-3 py-1 rounded">{leads}</span>
+                </div>
+                <input 
+                  type="range" min="50" max="1000" step="10" 
+                  value={leads} onChange={(e) => setLeads(Number(e.target.value))} 
+                  className="w-full h-[2px] bg-neutral-800 rounded-none appearance-none cursor-pointer accent-indigo-500"
+                />
+              </div>
+              
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-end">
+                  <label className="text-[11px] text-neutral-500 font-mono uppercase tracking-widest">Ticket Promedio (USD)</label>
+                  <span className="text-[14px] font-mono text-white bg-white/[0.05] border border-white/10 px-3 py-1 rounded">${ticket}</span>
+                </div>
+                <input 
+                  type="range" min="100" max="10000" step="100" 
+                  value={ticket} onChange={(e) => setTicket(Number(e.target.value))} 
+                  className="w-full h-[2px] bg-neutral-800 rounded-none appearance-none cursor-pointer accent-indigo-500"
+                />
+              </div>
+            </div>
+
+            <div className="w-[1px] h-32 bg-white/10 hidden md:block"></div>
+            <div className="w-full h-[1px] bg-white/10 block md:hidden"></div>
+
+            <div className="flex-1 w-full flex flex-col items-center justify-center text-center">
+              <div className="text-[11px] text-neutral-500 font-mono uppercase tracking-widest mb-4">Pérdida Mensual Estimada</div>
+              <div className="text-[56px] font-medium text-white tracking-tight leading-none mb-4 flex items-center">
+                $<NumberTicker value={lostRevenue} />
+              </div>
+              <p className="text-[13px] text-neutral-400 font-light">
+                Capital que AXIOM recuperaría operando 24/7.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* --- FINAL CTA --- */}
+      <section id="contact" className="relative z-10 w-full min-h-[80vh] pt-[200px] pb-48 bg-black flex flex-col items-center justify-center text-center px-6">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.05)_0%,transparent_50%)] pointer-events-none"></div>
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mb-6 relative z-10">
+          Implementación Selectiva.
+        </h2>
+        <p className="text-neutral-400 text-[17px] mb-12 max-w-lg leading-relaxed font-light relative z-10">
+          Para garantizar latencia cero, habilitamos infraestructura dedicada solo para un volumen controlado de organizaciones.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md relative z-10">
+          <input 
+            type="email" 
+            placeholder="Correo corporativo" 
+            className="flex-1 bg-white/[0.03] border border-white/10 rounded-lg px-5 py-3 text-[14px] text-white focus:outline-none focus:border-indigo-500/50 transition-colors placeholder:text-neutral-600"
+          />
+          <MagneticButton>
+            <button className="bg-white text-black font-medium px-8 py-3 rounded-lg text-[14px] hover:bg-neutral-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+              Solicitar
+            </button>
+          </MagneticButton>
+        </div>
+        <p className="text-[11px] text-neutral-600 mt-6 font-mono tracking-widest uppercase relative z-10">Analizaremos la viabilidad técnica antes de la sesión.</p>
+      </section>
+
+      {/* --- FOOTER --- */}
+      <footer className="w-full border-t border-white/[0.04] bg-[#020202] py-8 flex justify-center relative z-10">
         <p className="text-[11px] text-neutral-600 font-mono tracking-widest uppercase">AXIOM Systems © 2026</p>
       </footer>
-
     </main>
   );
 }

@@ -13,6 +13,13 @@
   
   --animate-blob: blob 15s infinite alternate;
   --animate-blob-reverse: blob-reverse 20s infinite alternate;
+  --animate-border-beam: border-beam calc(var(--duration)*1s) infinite linear;
+
+  @keyframes border-beam {
+    100% {
+      offset-distance: 100%;
+    }
+  }
   
   @keyframes blob {
     0% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
@@ -34,6 +41,10 @@
     --background: #000000;
     --foreground: #ededed;
   }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
