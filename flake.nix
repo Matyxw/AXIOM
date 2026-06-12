@@ -1,5 +1,5 @@
 {
-  description = "High-availability transactional backend — deterministic Rust 1.79.0 environment";
+  description = "AXIOM — Entorno Full-Stack reproducible con Rust 1.89.0 + Node 22";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -68,7 +68,7 @@
         # Shell de desarrollo: `nix develop` activa este entorno
         # -------------------------------------------------------------------
         devShells.default = pkgs.mkShell {
-          name = "bot-ia-backend-dev";
+          name = "axiom-dev";
 
           inherit buildInputs;
           nativeBuildInputs = [ rustToolchain ] ++ nativeBuildInputs;

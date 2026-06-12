@@ -602,12 +602,6 @@ export default function Home() {
         <p className="text-[11px] text-neutral-600 font-mono tracking-widest uppercase">AXIOM Systems © 2026</p>
       </footer>
 
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-      `}} />
     </main>
   );
 }

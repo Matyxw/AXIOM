@@ -23,13 +23,10 @@ export default function WhatsAppIntegrationPage() {
 
         <div className="mb-8">
           <label className="block text-[11px] font-mono text-neutral-500 uppercase tracking-widest mb-2">Webhook Verify Token</label>
-          <div className="flex gap-3">
-            <input type="text" readOnly value="axiom_webhook_secure_token_xyz" className="flex-1 bg-[#050505] border border-white/[0.1] rounded-lg px-4 py-3 text-[14px] text-neutral-400 font-mono focus:outline-none" />
-            <button className="bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.05] text-white px-4 py-3 rounded-lg text-[13px] font-medium transition-colors">
-              Copy
-            </button>
+          <div className="bg-[#050505] border border-white/[0.05] rounded-lg px-4 py-3 text-[14px] text-neutral-500 font-mono">
+            Configurado en el servidor vía variable de entorno <code className="text-neutral-400">WA_VERIFY_TOKEN</code>
           </div>
-          <p className="text-[12px] text-neutral-500 mt-2">Use this token when configuring the Webhook in your Meta App Dashboard.</p>
+          <p className="text-[12px] text-neutral-500 mt-2">El token se configura en el entorno del servidor, nunca se expone al cliente. Cópialo desde tu panel de configuración de infraestructura.</p>
         </div>
 
         <div className="flex justify-end pt-4 border-t border-white/[0.05]">
@@ -41,3 +38,4 @@ export default function WhatsAppIntegrationPage() {
     </div>
   );
 }
+
