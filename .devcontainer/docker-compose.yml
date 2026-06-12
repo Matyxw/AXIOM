@@ -6,7 +6,10 @@ services:
     command: sleep infinity
 
   surrealdb:
+    # SOLO DESARROLLO LOCAL — modo in-memory, los datos no persisten al reiniciar.
+    # NUNCA usar --pass root ni modo memory en producción.
+    # En producción: SurrealDB se conecta vía variable de entorno SURREALDB_URL con TLS.
     image: surrealdb/surrealdb:latest
-    command: start --log debug --user root --pass root memory
+    command: start --log info --user root --pass root memory
     ports:
       - "8000:8000"

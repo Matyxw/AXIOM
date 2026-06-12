@@ -50,6 +50,7 @@
           llvmPackages.libclang  # Headers de libclang para bindgen
           nodejs_22      # Entorno de ejecución para Frontend (Next.js)
           nil            # Nix Language Server
+          direnv         # Activación automática del entorno Nix en el shell
         ];
 
         buildInputs = with pkgs; [

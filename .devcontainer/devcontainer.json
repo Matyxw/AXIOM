@@ -27,6 +27,8 @@
       ]
     }
   },
-  "postCreateCommand": "bash -c 'sudo apt-get update && sudo apt-get install -y direnv && echo \"eval \\\"\\$(direnv hook bash)\\\"\" >> ~/.bashrc && echo \"eval \\\"\\$(direnv hook zsh)\\\"\" >> ~/.zshrc && direnv allow .'",
+  // direnv debe estar declarado en flake.nix bajo nativeBuildInputs, no instalado con apt.
+  // El postCreateCommand solo activa el entorno ya provisto por Nix.
+  "postCreateCommand": "direnv allow . && echo 'Entorno AXIOM activado. Ejecuta: nix develop'",
   "remoteUser": "vscode"
 }
