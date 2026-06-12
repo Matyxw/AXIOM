@@ -3,7 +3,7 @@ name: conventional-commits
 description: >
   Fuerza el formateo estructurado para todos los commits del proyecto.
   Aplica cada vez que el Agente deba proponer o ejecutar un `git commit`.
-alwaysOn: true
+alwaysOn: false
 ---
 
 # 📜 SEMANTIC GIT — DOCTRINA DE COMMITS
