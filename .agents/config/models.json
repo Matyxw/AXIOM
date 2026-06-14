@@ -1,5 +1,15 @@
 {
   "models": {
+    "claude-sonnet-4-5": {
+      "contextWindow": 200000,
+      "promptCaching": true,
+      "extendedThinking": false
+    },
+    "claude-opus-4-5": {
+      "contextWindow": 200000,
+      "promptCaching": true,
+      "extendedThinking": false
+    },
     "gemini-1.5-pro": {
       "thinkingConfig": {
         "thinkingBudget": 8192
