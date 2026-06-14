@@ -1,19 +1,17 @@
 {
   "models": {
+    "claude-haiku-4-5": {
+      "contextWindow": 200000,
+      "promptCaching": true,
+      "note": "Usar para: edición de archivos, refactors simples, commits, Q&A rápido"
+    },
     "claude-sonnet-4-5": {
       "contextWindow": 200000,
       "promptCaching": true,
-      "extendedThinking": false
-    },
-    "claude-opus-4-5": {
-      "contextWindow": 200000,
-      "promptCaching": true,
-      "extendedThinking": false
+      "note": "Usar para: arquitectura nueva, debugging complejo, auditorías de seguridad"
     },
     "gemini-1.5-pro": {
-      "thinkingConfig": {
-        "thinkingBudget": 8192
-      }
+      "thinkingConfig": { "thinkingBudget": 8192 }
     }
   }
 }
