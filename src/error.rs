@@ -11,6 +11,7 @@ pub enum AppError {
     #[error("Error de configuración: {0}")]
     ConfigError(#[from] config::ConfigError),
 
+    #[allow(clippy::result_large_err)]
     #[error("Error de SurrealDB: {0}")]
     SurrealDbError(#[from] surrealdb::Error),
 

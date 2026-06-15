@@ -10,6 +10,7 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
+    #[allow(clippy::result_large_err)]
     pub fn from_env() -> Result<Self, AppError> {
         let _ = dotenvy::dotenv();
 

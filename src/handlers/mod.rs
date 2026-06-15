@@ -92,7 +92,7 @@ async fn webhook_message_handler(
         }
     };
 
-    let tenant_id = match tenant_id {
+    let _tenant_id = match tenant_id {
         Some(t) => t,
         None => {
             warn!(
@@ -117,7 +117,7 @@ async fn webhook_message_handler(
                     for change in entry.changes {
                         for msg in change.value.messages {
                             if msg.msg_type == "text" {
-                                if let Some(text) = msg.text {
+                                if let Some(_text) = msg.text {
                                     // FIX: Aquí llamaremos al SDK real de Temporal (client.start_workflow)
                                     // usando IngestionWhatsappInput
                                     // Por ahora registramos el enrutamiento.
