@@ -84,19 +84,28 @@ Las Skills son archivos de instrucciones especializadas en `.agents/skills/`. El
 
 ## 5. WORKFLOWS — COMANDOS DISPONIBLES
 
-Los workflows son instrucciones paso a paso que el agente ejecuta al recibir el comando.
+### 5a. Con botón en Antigravity IDE (slash commands registrados)
+
+Estos aparecen como botones en el panel de comandos de Antigravity. También funcionan en Cline escribiendo el comando.
 
 | Comando | Propósito | Cuándo usarlo |
 |---|---|---|
 | `/sync-obsidian` | Auditar git log, cruzar con Roadmap, actualizar MOCs en Obsidian, crear bitácora de sesión, detectar desviaciones | Al terminar sesión o feature completa |
-| `/sandwich [tarea]` | Orquestar tarea compleja: Blueprint → Ejecución → Validación con `cargo clippy` | Para tareas multi-paso que requieren planificación explícita |
+| `/sandwich [tarea]` | Orquestar tarea compleja: Blueprint → Ejecución → Validación con `cargo clippy`. Requiere aprobación del blueprint antes de codificar | Para tareas multi-paso que requieren planificación explícita |
 | `/temporal-scaffold [Nombre]` | Generar Workflow + Activities del SDK de Temporal con patrones correctos | Al crear un nuevo flujo de backend durable |
 | `/cron-build` | Lanzar `cargo build --release` en background — el sistema revive al agente cuando termina | Tras cambios estructurales en Rust |
 | `/audit-red-team` | Secuencia completa: threat model → escaneo → PoC de ataque → reporte con parches | Antes de merge a `main` o deploy a producción |
-| `/mockup-ui [Componente]` | Generar imagen fotorrealista del diseño con IA. Solo traduce a código si aprobás visualmente | Antes de programar cualquier componente de UI nuevo |
-| `/test-e2e [ruta?]` | Lanzar Browser Subagent que navega `localhost:3000`, graba video `.webp` y entrega reporte QA | Para validar el frontend visualmente |
-| `/persistent-shell` | Abrir terminal `nix develop` persistente con caché caliente para compilaciones rápidas | Al inicio de sesiones largas con muchas compilaciones |
-| `/review-security` | Auditar: SurrealDB injections, HMAC bypass, `unwrap()` en prod, data leaks en logs. Tabla `[LIMPIO/FALLO]` | Antes de cualquier commit de backend |
+
+### 5b. Workflows manuales (sin botón — archivo existe pero no está registrado en Antigravity)
+
+Estos archivos están en `.agents/workflows/` y el agente puede seguirlos si se los describís verbalmente o los mencionás. Para invocarlos, decile al agente exactamente qué querés hacer y él leerá el workflow correspondiente.
+
+| Workflow | Archivo | Propósito | Cómo invocarlo |
+|---|---|---|---|
+| Mockup UI | `mockup-ui.md` | Generar imagen fotorrealista del diseño antes de codificar | "Generá un mockup del componente X antes de escribir código" |
+| Test E2E | `test-e2e.md` | Browser Subagent que navega `localhost:3000`, graba video `.webp` y entrega reporte QA | "Ejecutá un test E2E del frontend" |
+| Persistent Shell | `persistent-shell.md` | Abrir terminal `nix develop` persistente con caché caliente | "Abrí un shell persistente con nix develop" |
+| Review Security | `review-security.md` | Auditar: SurrealDB injections, HMAC bypass, `unwrap()` en prod, data leaks. Tabla `[LIMPIO/FALLO]` | "Hacé una review de seguridad del código de esta sesión" |
 
 ---
 
