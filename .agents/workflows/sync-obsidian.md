@@ -65,3 +65,14 @@ No dejar la bitácora huérfana:
 Lista exactamente los 4-6 archivos modificados en Obsidian.
 Señala cualquier **Desviación del Roadmap** detectada.
 Pregunta cuál es el siguiente cuello de botella. Sin saludos ni cierre decorativo.
+
+## 7. ACTUALIZAR `.agents/CONTEXT.md` (OBLIGATORIO)
+
+Después de sincronizar Obsidian, actualizar `.agents/CONTEXT.md` con el estado actual del proyecto:
+1. Actualizar la fecha en el header.
+2. Revisar la sección "Módulos que EXISTEN y funcionan" — agregar lo completado en este sprint.
+3. Revisar "Módulos ESTRUCTURALES" — mover a "funcionan" si fueron completados.
+4. Actualizar "Bloqueantes para Producción" — eliminar los resueltos, agregar nuevos.
+5. Actualizar "Próximo Sprint Sugerido" con el cuello de botella identificado.
+
+Este paso garantiza que la próxima sesión de Claude tenga contexto inmediato sin necesitar leer Obsidian.
