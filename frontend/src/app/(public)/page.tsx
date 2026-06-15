@@ -358,10 +358,11 @@ export default function Home() {
               <div className="text-[10px] text-neutral-500 uppercase tracking-widest mb-6 pb-4 border-b border-white/[0.04]">Infraestructura Backend (Rust)</div>
               
               <div className="flex-1 flex flex-col justify-end gap-2 text-neutral-400">
-                <div className="terminal-log-1 opacity-0 -translate-x-4 flex gap-3"><span className="text-emerald-400">RECV</span><span>POST /webhook/meta (wamid_12x98y)</span></div>
-                <div className="terminal-log-2 opacity-0 -translate-x-4 flex gap-3"><span className="text-blue-400">EXEC</span><span>Verify HMAC-SHA256: OK (0.1ms)</span></div>
-                <div className="terminal-log-3 opacity-0 -translate-x-4 flex gap-3"><span className="text-purple-400">SPWN</span><span>Temporal Workflow: Start IntentAnalyzer</span></div>
-                <div className="terminal-log-4 opacity-0 -translate-x-4 flex gap-3"><span className="text-indigo-400">RAG </span><span>Context: "Enterprise Plan / 50 seats"</span></div>
+                <div className="flex gap-4"><span className="text-emerald-400">RECV</span><span>POST /webhook/meta (wamid_12x98y)</span></div>
+                <div className="flex gap-4"><span className="text-blue-400">EXEC</span><span>Verify HMAC-SHA256: OK</span></div>
+                <div className="flex gap-4"><span className="text-blue-400">EXEC</span><span>SurrealDB: Check deduplication (0ms) -&gt; NEW</span></div>
+                <div className="flex gap-4"><span className="text-purple-400">SPWN</span><span>Temporal Workflow: Start IntentAnalyzer</span></div>
+                <div className="flex gap-4"><span className="text-blue-400">RAG </span><span>Extracted context: &quot;Pricing Enterprise Plan&quot;</span></div>
                 <div className="terminal-log-5 opacity-0 -translate-x-4 flex gap-3 text-white"><span className="text-emerald-500">DONE</span><span>Booking Link Generated. Latency: 1.22s</span></div>
               </div>
             </div>
