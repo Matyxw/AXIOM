@@ -9,6 +9,7 @@
 | `src/temporal/`, Workflow, Activity, RetryPolicy | `temporal-rust` | `.agents/skills/temporal-rust/SKILL.md` |
 | Axum handler, `State<Arc<AppState>>`, `tokio::`, concurrencia | `axum-tokio` | `.agents/skills/axum-tokio/SKILL.md` |
 | `frontend/`, `.tsx`, `.ts`, Next.js, App Router, Server Component | `nextjs-strict` | `.agents/skills/nextjs-strict/SKILL.md` |
+| UI, CSS, Tailwind, diseño, diseño visual, animaciones, `page.tsx` | `apex-ui-ux` | `.agents/skills/apex-ui-ux/SKILL.md` |
 | `flake.nix`, `nativeBuildInputs`, dependencias de sistema | `nix-flake-master` | `.agents/skills/nix-flake-master/SKILL.md` |
 | `git commit`, cualquier commit de código | `conventional-commits` | `.agents/skills/conventional-commits/SKILL.md` |
 
