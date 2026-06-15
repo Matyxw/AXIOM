@@ -19,10 +19,9 @@
 - **Temporal Ingestion Workflow** (`src/temporal/workflows/ingestion_whatsapp.rs`): Orquesta Dedup → Intent → Dispatch. Correcto arquitectónicamente. Bloqueado por: `temporal-sdk` no publicado en crates.io.
 - **Temporal Activities** (`src/temporal/activities/ingestion_whatsapp.rs`): 3 actividades con lógica de SurrealDB + Groq + WhatsApp API.
 
-### 🔴 Bloqueantes para Producción (en orden de prioridad)
-1. **`load_tenants_cache` comentado** (`src/main.rs:L33`) — sin esto, TODOS los mensajes de WhatsApp son descartados silenciosamente.
-2. **Temporal Worker no inicializado** (`src/main.rs:L44`) — los workflows existen pero nadie los ejecuta.
-3. **`temporal-sdk` sin release estable** (`Cargo.toml:L20`) — SDK en alpha, no disponible en crates.io.
+### 🔴 Bloqueantes para Producción
+1. **Falta inyección temporal:** El Worker de Temporal en `src/main.rs:44` no está inicializado.
+2. **Dependencia Alpha:** `temporal-sdk` está detrás de un feature flag de cargo (`temporal`) porque es inestable.
 
 ---
 

@@ -30,7 +30,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("[main] Conexión a SurrealDB establecida (ws://localhost:8000 | ns=apex db=apex)");
 
     let tenant_cache = Arc::new(tokio::sync::RwLock::new(std::collections::HashMap::new()));
-    // TODO: load_tenants_cache(&db, &tenant_cache).await;
+    if let Err(e) = crate::state::load_tenants_cache(&db, &tenant_cache).await {
+        tracing::error!("[main] Error al cargar caché de tenants (el webhook descartará mensajes): {}", e);
+    }
 
     let state = Arc::new(AppState {
         wa_app_secret: Arc::new(config.wa_app_secret),

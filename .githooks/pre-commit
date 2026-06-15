@@ -13,10 +13,10 @@ NC='\033[0m'
 echo "🔍 [APEX Pre-commit] Auditando código..."
 
 # ── 1. RUST: unwrap() en código de producción ─────────────────────────────────
-UNWRAP_FILES=$(git diff --cached --name-only | grep '\.rs$' || true)
+UNWRAP_FILES=$(git diff --cached --name-only -G'\.unwrap\(\)' -- '*.rs' || true)
 if [ -n "$UNWRAP_FILES" ]; then
     # Busca unwrap() fuera de bloques de test o sin comentario SAFETY
-    VIOLATIONS=$(git diff --cached -- '*.rs' | grep '^\+' | grep -v '^\+\+\+' | grep '\.unwrap()' | grep -v '// SAFETY:' | grep -v '#\[cfg(test)\]' || true)
+    VIOLATIONS=$(git diff --cached "*.rs" | grep '^\+' | grep -v '^+++' | grep '\.unwrap()' | grep -v '// SAFETY:' | grep -v '#\[cfg(test)\]' || true)
     if [ -n "$VIOLATIONS" ]; then
         echo -e "${RED}❌ [FAIL] unwrap() sin // SAFETY: en código de producción:${NC}"
         echo "$VIOLATIONS"
@@ -27,7 +27,7 @@ fi
 
 # ── 2. SECRETOS HARDCODEADOS ──────────────────────────────────────────────────
 SECRET_PATTERNS='(EAAI_|sk-|ghp_|gho_|github_pat_|xoxb-|xoxp-)'
-SECRETS=$(git diff --cached -- ':!*.example' | grep '^\+' | grep -v '^\+\+\+' | grep -E "$SECRET_PATTERNS" || true)
+SECRETS=$(git diff --cached | grep '^\+' | grep -v '^+++' | grep -E "$SECRET_PATTERNS" || true)
 if [ -n "$SECRETS" ]; then
     echo -e "${RED}❌ [FAIL] Posible secreto hardcodeado detectado:${NC}"
     echo "$SECRETS"
@@ -35,7 +35,7 @@ if [ -n "$SECRETS" ]; then
 fi
 
 # ── 3. RUST: cargo check (solo si hay archivos .rs en el diff) ────────────────
-if [ -n "$UNWRAP_FILES" ]; then
+if [ -n "$(git diff --cached --name-only -- '*.rs')" ]; then
     if command -v cargo &> /dev/null; then
         echo "🦀 [cargo check] Verificando compilación..."
         if ! cargo check --quiet 2>&1; then
@@ -43,8 +43,16 @@ if [ -n "$UNWRAP_FILES" ]; then
             exit 1
         fi
         echo -e "${GREEN}✅ cargo check OK${NC}"
+    elif command -v nix &> /dev/null; then
+        echo -e "${YELLOW}⚠️  Usando Nix para verificar el código...${NC}"
+        if ! nix develop -c cargo check --quiet 2>&1; then
+            echo -e "${RED}❌ [FAIL] cargo check falló en Nix. No se puede commitear.${NC}"
+            exit 1
+        fi
+        echo -e "${GREEN}✅ cargo check OK (Nix)${NC}"
     else
-        echo -e "${YELLOW}⚠️  cargo no encontrado. Saltar dentro de 'nix develop'.${NC}"
+        echo -e "${RED}❌ [FAIL] Ni cargo ni nix instalados.${NC}"
+        exit 1
     fi
 fi
 
