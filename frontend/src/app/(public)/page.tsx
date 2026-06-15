@@ -150,7 +150,7 @@ export default function Home() {
           Orquestación Autónoma de Ventas B2B
         </div>
         
-        <h1 className="text-5xl md:text-[80px] font-medium tracking-tight mb-6 leading-[1.05] max-w-5xl">
+        <h1 className="text-5xl md:text-[80px] font-medium tracking-tighter mb-6 leading-[0.95] max-w-5xl">
           El costo oculto de las <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-b from-indigo-300 via-white to-neutral-400">
             horas no laborables.
@@ -231,11 +231,11 @@ export default function Home() {
       <section className="relative z-10 w-full pb-32 mt-16">
         <div className="max-w-6xl mx-auto px-6 text-center border-y border-white/[0.04] py-10 bg-white/[0.01]">
           <p className="text-[11px] text-neutral-500 font-mono tracking-widest uppercase mb-8">Integración Nativa Sin Fricción</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 hover:opacity-100 transition-opacity duration-700">
-            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-green-500">W</span> WhatsApp</div>
-            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-blue-500">C</span> Calendly</div>
-            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-purple-500">S</span> SurrealDB</div>
-            <div className="text-xl font-bold tracking-tight flex items-center gap-2"><span className="text-orange-500">T</span> Temporal</div>
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-1000 group">
+            <div className="text-xl font-bold tracking-tighter flex items-center gap-2 text-neutral-500 group-hover:text-neutral-200 transition-colors duration-500"><span className="text-neutral-700 group-hover:text-emerald-400 group-hover:drop-shadow-[0_0_15px_rgba(52,211,153,0.8)] transition-all duration-500">W</span> WhatsApp</div>
+            <div className="text-xl font-bold tracking-tighter flex items-center gap-2 text-neutral-500 group-hover:text-neutral-200 transition-colors duration-500"><span className="text-neutral-700 group-hover:text-blue-400 group-hover:drop-shadow-[0_0_15px_rgba(96,165,250,0.8)] transition-all duration-500">C</span> Calendly</div>
+            <div className="text-xl font-bold tracking-tighter flex items-center gap-2 text-neutral-500 group-hover:text-neutral-200 transition-colors duration-500"><span className="text-neutral-700 group-hover:text-purple-400 group-hover:drop-shadow-[0_0_15px_rgba(192,132,252,0.8)] transition-all duration-500">S</span> SurrealDB</div>
+            <div className="text-xl font-bold tracking-tighter flex items-center gap-2 text-neutral-500 group-hover:text-neutral-200 transition-colors duration-500"><span className="text-neutral-700 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_15px_rgba(251,146,60,0.8)] transition-all duration-500">T</span> Temporal</div>
           </div>
         </div>
       </section>
@@ -251,33 +251,33 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bento-card bg-[#050505] border border-white/[0.06] rounded-2xl p-8 hover:bg-[#080808] transition-colors relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-[50px] group-hover:bg-orange-500/10 transition-colors"></div>
-              <div className="w-10 h-10 border border-white/10 bg-white/[0.02] rounded-lg mb-6 flex items-center justify-center text-orange-400 font-mono text-[10px]">.rs</div>
-              <h3 className="text-lg font-medium text-white mb-3">Motor en Rust</h3>
-              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">
+            <div className="bento-card bg-black border border-white/[0.04] rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2 hover:border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:bg-[#050505] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/0 blur-[50px] group-hover:bg-orange-500/10 transition-colors duration-700"></div>
+              <div className="w-10 h-10 border border-white/5 bg-white/[0.01] rounded-lg mb-6 flex items-center justify-center text-orange-400 font-mono text-[10px] group-hover:border-white/20 transition-colors duration-500 shadow-[inset_0_0_10px_rgba(255,255,255,0.02)]">.rs</div>
+              <h3 className="text-lg font-medium text-white mb-3 tracking-tight">Motor en Rust</h3>
+              <p className="text-neutral-500 text-[14px] font-light leading-relaxed group-hover:text-neutral-400 transition-colors duration-500">
                 Concurrencia extrema. 0 pausas de recolección de basura. Respuestas en milisegundos bajo picos masivos de tráfico.
               </p>
             </div>
             
-            <div className="bento-card bg-[#050505] border border-white/[0.06] rounded-2xl p-8 hover:bg-[#080808] transition-colors relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-[50px] group-hover:bg-blue-500/10 transition-colors"></div>
-              <div className="w-10 h-10 border border-white/10 bg-white/[0.02] rounded-lg mb-6 flex items-center justify-center">
-                <div className="w-4 h-4 border-2 border-blue-400 rounded-full border-t-transparent animate-spin"></div>
+            <div className="bento-card bg-black border border-white/[0.04] rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2 hover:border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:bg-[#050505] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/0 blur-[50px] group-hover:bg-blue-500/10 transition-colors duration-700"></div>
+              <div className="w-10 h-10 border border-white/5 bg-white/[0.01] rounded-lg mb-6 flex items-center justify-center group-hover:border-white/20 transition-colors duration-500 shadow-[inset_0_0_10px_rgba(255,255,255,0.02)]">
+                <div className="w-4 h-4 border-2 border-blue-500/50 rounded-full border-t-transparent animate-spin group-hover:border-blue-400 transition-colors"></div>
               </div>
-              <h3 className="text-lg font-medium text-white mb-3">Temporal.io</h3>
-              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">
+              <h3 className="text-lg font-medium text-white mb-3 tracking-tight">Temporal.io</h3>
+              <p className="text-neutral-500 text-[14px] font-light leading-relaxed group-hover:text-neutral-400 transition-colors duration-500">
                 Ejecución duradera. Si un servicio externo colapsa, la transacción se congela y retoma donde quedó. Cero ventas perdidas.
               </p>
             </div>
 
-            <div className="bento-card bg-[#050505] border border-white/[0.06] rounded-2xl p-8 hover:bg-[#080808] transition-colors relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 blur-[50px] group-hover:bg-purple-500/10 transition-colors"></div>
-              <div className="w-10 h-10 border border-white/10 bg-white/[0.02] rounded-lg mb-6 flex items-center justify-center">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-purple-400" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <div className="bento-card bg-black border border-white/[0.04] rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2 hover:border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:bg-[#050505] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/0 blur-[50px] group-hover:bg-purple-500/10 transition-colors duration-700"></div>
+              <div className="w-10 h-10 border border-white/5 bg-white/[0.01] rounded-lg mb-6 flex items-center justify-center group-hover:border-white/20 transition-colors duration-500 shadow-[inset_0_0_10px_rgba(255,255,255,0.02)]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-purple-500/60 group-hover:text-purple-400 transition-colors" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
               </div>
-              <h3 className="text-lg font-medium text-white mb-3">Aislamiento por Tenant</h3>
-              <p className="text-neutral-500 text-[14px] font-light leading-relaxed">
+              <h3 className="text-lg font-medium text-white mb-3 tracking-tight">Aislamiento por Tenant</h3>
+              <p className="text-neutral-500 text-[14px] font-light leading-relaxed group-hover:text-neutral-400 transition-colors duration-500">
                 Tus datos, prompts y leads están aislados criptográficamente por Namespace en SurrealDB. Seguridad B2B nivel banco.
               </p>
             </div>
@@ -302,49 +302,49 @@ export default function Home() {
               
               <div className="flex-1 flex flex-col justify-end gap-4 text-[13px]">
                 <div className="chat-msg-1 opacity-0 translate-y-4 flex items-start gap-3">
-                  <div className="w-6 h-6 rounded bg-neutral-800 flex items-center justify-center shrink-0">U</div>
-                  <div className="bg-[#111] text-neutral-300 rounded-xl rounded-tl-none p-3 border border-white/[0.04]">
+                  <div className="w-6 h-6 rounded border border-white/[0.05] bg-white/[0.02] backdrop-blur-sm flex items-center justify-center shrink-0 shadow-[inset_0_0_10px_rgba(255,255,255,0.02)]">U</div>
+                  <div className="bg-white/[0.02] backdrop-blur-md text-neutral-300 rounded-xl rounded-tl-none p-3 border border-white/[0.04] shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
                     Tienen disponibilidad para implementar en una empresa de 50 empleados esta semana?
                   </div>
                 </div>
                 
-                <div className="typing-a-1 opacity-0 flex items-center gap-2 text-neutral-500 bg-[#111] w-fit p-2 rounded-xl rounded-tl-none border border-white/[0.04]">
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
+                <div className="typing-a-1 opacity-0 flex items-center gap-2 text-neutral-500 bg-white/[0.02] backdrop-blur-md w-fit p-2.5 rounded-xl rounded-tl-none border border-white/[0.04] shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
                 </div>
 
                 <div className="chat-msg-2 opacity-0 translate-y-4 flex items-start gap-3">
-                  <div className="w-6 h-6 rounded bg-indigo-500 text-white flex items-center justify-center shrink-0">A</div>
-                  <div className="bg-indigo-500/10 text-indigo-100 rounded-xl rounded-tl-none p-3 border border-indigo-500/20">
+                  <div className="w-6 h-6 rounded bg-indigo-500/20 border border-indigo-400/30 text-indigo-100 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(99,102,241,0.2)]">A</div>
+                  <div className="bg-indigo-500/10 backdrop-blur-md text-indigo-100 rounded-xl rounded-tl-none p-3 border border-indigo-400/20 shadow-[0_5px_20px_rgba(99,102,241,0.1)]">
                     Sí, tenemos un bloque de implementación libre el jueves. Para 50 empleados, el plan Enterprise cubre todo. Te genero el link de reserva?
                   </div>
                 </div>
 
-                <div className="typing-u-1 opacity-0 flex items-center gap-2 text-neutral-500 bg-[#111] w-fit p-2 rounded-xl rounded-tl-none border border-white/[0.04]">
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
+                <div className="typing-u-1 opacity-0 flex items-center gap-2 text-neutral-500 bg-white/[0.02] backdrop-blur-md w-fit p-2.5 rounded-xl rounded-tl-none border border-white/[0.04] shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
                 </div>
 
                 <div className="chat-msg-3 opacity-0 translate-y-4 flex items-start gap-3">
-                  <div className="w-6 h-6 rounded bg-neutral-800 flex items-center justify-center shrink-0">U</div>
-                  <div className="bg-[#111] text-neutral-300 rounded-xl rounded-tl-none p-3 border border-white/[0.04]">
+                  <div className="w-6 h-6 rounded border border-white/[0.05] bg-white/[0.02] backdrop-blur-sm flex items-center justify-center shrink-0 shadow-[inset_0_0_10px_rgba(255,255,255,0.02)]">U</div>
+                  <div className="bg-white/[0.02] backdrop-blur-md text-neutral-300 rounded-xl rounded-tl-none p-3 border border-white/[0.04] shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
                     Perfecto, pasámelo.
                   </div>
                 </div>
 
-                <div className="typing-a-2 opacity-0 flex items-center gap-2 text-neutral-500 bg-[#111] w-fit p-2 rounded-xl rounded-tl-none border border-white/[0.04]">
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
-                  <div className="w-1.5 h-1.5 bg-neutral-500 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
+                <div className="typing-a-2 opacity-0 flex items-center gap-2 text-neutral-500 bg-white/[0.02] backdrop-blur-md w-fit p-2.5 rounded-xl rounded-tl-none border border-white/[0.04] shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
+                  <div className="w-1.5 h-1.5 bg-neutral-600 rounded-full animate-bounce" style={{animationDelay: "0.4s"}}></div>
                 </div>
 
                 <div className="chat-msg-4 opacity-0 translate-y-4 flex items-start gap-3">
-                  <div className="w-6 h-6 rounded bg-indigo-500 text-white flex items-center justify-center shrink-0">A</div>
-                  <div className="bg-indigo-500/10 text-indigo-100 rounded-xl rounded-tl-none p-3 border border-indigo-500/20 flex flex-col gap-2">
+                  <div className="w-6 h-6 rounded bg-indigo-500/20 border border-indigo-400/30 text-indigo-100 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(99,102,241,0.2)]">A</div>
+                  <div className="bg-indigo-500/10 backdrop-blur-md text-indigo-100 rounded-xl rounded-tl-none p-3 border border-indigo-400/20 flex flex-col gap-3 shadow-[0_5px_20px_rgba(99,102,241,0.1)]">
                     Listo. Aquí tienes tu acceso exclusivo para agendar el Setup:
-                    <div className="bg-black/50 border border-white/10 rounded p-2 text-center hover:bg-white/5 cursor-pointer transition-colors text-blue-400">
+                    <div className="bg-black/40 border border-indigo-400/20 rounded-lg p-2.5 text-center hover:bg-white/[0.05] hover:border-indigo-400/40 cursor-pointer transition-all duration-300 text-indigo-300 shadow-[inset_0_0_15px_rgba(99,102,241,0.05)]">
                       🗓️ Agendar en Calendly
                     </div>
                   </div>
