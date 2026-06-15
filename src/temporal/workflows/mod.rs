@@ -12,12 +12,13 @@ pub struct InboundMessage {
 }
 
 pub async fn message_processing_workflow(
-    ctx: WorkflowContext,
-    msg: InboundMessage,
+    _ctx: WorkflowContext,
+    _msg: InboundMessage,
 ) -> WorkflowResult<()> {
     // 1. Log the incoming message
     // ctx.activity(...)
     Ok(())
 }
 
+#[cfg(feature = "temporal")]
 pub mod ingestion_whatsapp;

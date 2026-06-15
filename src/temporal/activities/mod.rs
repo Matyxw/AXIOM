@@ -15,8 +15,8 @@ pub async fn persist_to_surrealdb(
     state.db.use_ns(&tenant_id).use_db("apex").await?;
     state.db
         .query("INSERT INTO messages (wamid, body, received_at) VALUES ($wamid, $body, time::now())")
-        .bind(("wamid", &wamid))
-        .bind(("body", &message))
+        .bind(("wamid", wamid.clone()))
+        .bind(("body", message.clone()))
         .await?;
     Ok(())
 }
@@ -31,5 +31,6 @@ pub async fn send_reply_activity(
     crate::whatsapp::send_whatsapp_message(&state.http_client, &to, &body, &state).await
 }
 
+#[cfg(feature = "temporal")]
 pub mod ingestion_whatsapp;
 

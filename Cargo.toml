@@ -3,6 +3,11 @@ name    = "bot-ia-backend"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+# Activar cuando el SDK de Temporal tenga release estable en crates.io:
+# cargo build --features temporal
+temporal = []
+
 [dependencies]
 tokio      = { version = "1",    features = ["full"] }
 axum       = { version = "0.8" }
@@ -19,8 +24,5 @@ tracing-subscriber = { version = "0.3",  features = ["env-filter"] }
 thiserror          = "2"
 config             = "0.14"
 dotenvy            = "0.15"
-# temporal-sdk       = { git = "https://github.com/temporalio/sdk-core" }
-# temporal-sdk-core  = { git = "https://github.com/temporalio/sdk-core" }
-# uuid: se usará para generar IDs de Workflow al integrar Temporal.
+# temporal-sdk = { git = "..." }  # Añadir aquí cuando el SDK esté estable y activar feature 'temporal'
 uuid               = { version = "1.0", features = ["v4", "fast-rng"] }
-

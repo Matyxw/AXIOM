@@ -56,7 +56,7 @@ async fn webhook_message_handler(
 
     let parsed_json = serde_json::from_slice::<serde_json::Value>(&body_bytes).ok();
     
-    let wamid: Option<String> = parsed_json.as_ref()
+    let _wamid: Option<String> = parsed_json.as_ref()
         .and_then(|v| {
             v.get("entry")?
                 .get(0)?
@@ -103,12 +103,11 @@ async fn webhook_message_handler(
         }
     };
 
-    // La deduplicación ahora está delegada a la Actividad de Temporal.
+    // La deduplicación está delegada a la Actividad de Temporal.
     // Esto garantiza que el webhook retorne 200 OK a Meta en < 20ms, evitando baneos por timeout.
-    tracing::info!("[webhook_message] Firma verificada. Despachando a Temporal.");
     tracing::info!("[webhook_message] Firma verificada. Despachando procesamiento async.");
 
-    let state_clone = Arc::clone(&state);
+    let _state_clone = Arc::clone(&state);
     let body_clone = body_bytes.clone();
 
     tokio::spawn(async move {
@@ -119,15 +118,10 @@ async fn webhook_message_handler(
                         for msg in change.value.messages {
                             if msg.msg_type == "text" {
                                 if let Some(text) = msg.text {
-                                    let inbound_input = crate::temporal::workflows::ingestion_whatsapp::IngestionWhatsappInput {
-                                        tenant_id: tenant_id.clone(),
-                                        wamid: msg.id.clone(),
-                                        from_phone: msg.from.clone(),
-                                        body: text.body.clone(),
-                                    };
                                     // FIX: Aquí llamaremos al SDK real de Temporal (client.start_workflow)
+                                    // usando IngestionWhatsappInput
                                     // Por ahora registramos el enrutamiento.
-                                    info!("[webhook_message] Workflow IngestionWhatsapp encolado para WAMID: {}", inbound_input.wamid);
+                                    info!("[webhook_message] Workflow IngestionWhatsapp encolado para WAMID: {}", msg.id);
                                 }
                             }
                         }
