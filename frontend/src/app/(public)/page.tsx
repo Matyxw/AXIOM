@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
 
 export default function Page() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -20,7 +20,7 @@ export default function Page() {
   }, []);
 
   // Animaciones de Framer Motion
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -31,7 +31,7 @@ export default function Page() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
     visible: { 
       opacity: 1, 
@@ -88,29 +88,38 @@ export default function Page() {
             </div>
           </motion.div>
 
-          {/* TÍTULO HERO (Tipografía Extrema) */}
+          {/* TÍTULO HERO (Psicología de Aversión a la Pérdida) */}
           <motion.h1 
             variants={itemVariants}
-            className="text-center text-[12vw] sm:text-[100px] md:text-[140px] font-medium leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-800"
+            className="text-center text-[10vw] sm:text-[90px] md:text-[110px] font-medium leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-800"
           >
-            Orquestación<br />
-            <span className="text-zinc-500 italic font-serif opacity-80 tracking-normal pr-4">autónoma</span>
+            Tu competencia<br />
+            <span className="text-zinc-500 italic font-serif opacity-80 tracking-normal pr-4">no duerme.</span>
           </motion.h1>
 
           <motion.p 
             variants={itemVariants}
-            className="mt-12 max-w-2xl text-center text-lg md:text-xl font-light text-zinc-500 leading-relaxed"
+            className="mt-12 max-w-2xl text-center text-lg md:text-xl font-light text-zinc-400 leading-relaxed"
           >
-            El costo oculto de las horas no laborables desaparece. Construido sobre un motor concurrente en Rust, aislando cada byte de tus clientes B2B.
+            Estás perdiendo el 40% de tus ventas potenciales fuera del horario comercial. Detenemos la hemorragia hoy mismo con un Motor Orquestador B2B autónomo.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="mt-12 flex flex-col sm:flex-row items-center gap-6">
-            <button className="group relative overflow-hidden rounded-full border border-white/10 bg-white/5 px-8 py-4 backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-105 hover:bg-white/10 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)]">
-              <span className="relative z-10 font-medium text-white tracking-wide">Desplegar Instancia</span>
-              <div className="absolute inset-0 z-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/20 to-indigo-500/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-hover:animate-pulse"></div>
-            </button>
-            <button className="font-medium text-zinc-500 transition-colors duration-300 hover:text-white">
-              Leer Documentación
+          {/* MAGNETIC CTA BUTTON */}
+          <motion.div variants={itemVariants} className="mt-16 flex flex-col sm:flex-row items-center gap-8 relative">
+            <div className="absolute inset-0 -z-10 bg-indigo-500/20 blur-[100px] rounded-full"></div>
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative overflow-hidden rounded-full border border-indigo-400/30 bg-indigo-500/10 px-10 py-5 backdrop-blur-3xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-indigo-400/80 hover:bg-indigo-500/20 hover:shadow-[0_0_60px_rgba(99,102,241,0.4)]"
+            >
+              <span className="relative z-10 font-semibold text-indigo-100 tracking-wide text-lg flex items-center gap-3">
+                Cerrar la Hemorragia
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform duration-300"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+              </span>
+              <div className="absolute inset-0 z-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/30 to-indigo-500/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-hover:animate-[spin_3s_linear_infinite]"></div>
+            </motion.button>
+            <button className="font-medium text-zinc-500 transition-colors duration-300 hover:text-zinc-300 text-sm tracking-wide">
+              Auditoría de Conversión Gratuita
             </button>
           </motion.div>
         </motion.div>
@@ -193,9 +202,9 @@ export default function Page() {
               <div className="mb-12 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.05] bg-white/[0.01] shadow-[inset_0_0_15px_rgba(255,255,255,0.02)] group-hover:border-white/20 transition-all duration-500">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-purple-500/60 group-hover:text-purple-400 transition-colors duration-500" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
               </div>
-              <h3 className="mb-4 text-2xl font-medium tracking-tight text-zinc-100">Isolación Criptográfica</h3>
+              <h3 className="mb-4 text-2xl font-medium tracking-tight text-zinc-100">Fuga de Datos Imposible</h3>
               <p className="text-zinc-500 leading-relaxed font-light">
-                Separación por namespaces en SurrealDB. La fuga de datos entre inquilinos (Tenants) es matemáticamente imposible.
+                Separación por namespaces criptográficos en SurrealDB. La confianza de tus clientes nivel Enterprise está asegurada matemáticamente.
               </p>
             </div>
           </motion.div>
