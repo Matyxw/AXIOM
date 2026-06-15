@@ -1,3 +1,7 @@
+---
+description: "Lanza un Browser Subagent que navega localhost:3000, graba un video .webp y entrega reporte QA visual del frontend."
+---
+
 # TEST E2E — NAVEGADOR SUBAGENTE AUTÓNOMO
 
 > **INSTRUCCIÓN PARA EL AGENTE:**

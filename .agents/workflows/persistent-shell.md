@@ -1,3 +1,7 @@
+---
+description: "Abre una terminal nix develop persistente con caché caliente para compilaciones más rápidas durante sesiones largas."
+---
+
 # PERSISTENT SHELL — NIX INMORTAL
 
 > **INSTRUCCIÓN PARA EL AGENTE:**

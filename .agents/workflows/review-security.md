@@ -1,3 +1,7 @@
+---
+description: "Auditoría rápida pre-commit: SurrealDB injections, HMAC bypass, unwrap() en producción y data leaks en logs. Entrega tabla LIMPIO/FALLO."
+---
+
 # REVIEW SECURITY — AUDITORÍA IMPLACABLE DE CÓDIGO
 
 > **INSTRUCCIÓN PARA EL AGENTE:**

@@ -1,3 +1,7 @@
+---
+description: "Genera un mockup fotorrealista de un componente UI antes de escribir código. Solo traduce a código si el usuario aprueba visualmente."
+---
+
 # MOCKUP UI — INGENIERÍA GENERATIVA FRONTEND
 
 > **INSTRUCCIÓN PARA EL AGENTE:**
