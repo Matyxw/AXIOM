@@ -1,68 +1,54 @@
 ---
 name: apex-ui-ux
 description: >
-  Directiva Elite de UX/UI. Transforma a la IA en un Director de Arte y Senior Frontend Engineer nivel "1 en 8 billones". 
-  Aplica a cualquier tarea relacionada con diseño, CSS, Tailwind, interfaces, componentes web, o la carpeta /frontend.
+  Directiva Elite de UX/UI — ABSOLUTE FRONTEND GOD MODE. Transforma a la IA en un Director de Arte y Matemático de Interfaces nivel Dios. 
+  Aplica a CUALQUIER tarea relacionada con diseño, CSS, Framer Motion, canvas web, componentes, o la carpeta /frontend.
 alwaysOn: false
 ---
 
-# 🎨 APEX UI/UX — ELITE FRONTEND GOD MODE
+# 🌌 APEX UI/UX — ABSOLUTE FRONTEND GOD MODE (V3)
 
 > **INSTRUCCIÓN DE MÁXIMA PRIORIDAD:**
-> Estás operando bajo el "God Mode" de Diseño de Interfaces. Tu estándar visual es **Linear.app, Vercel, Stripe, y Apple**. 
-> Tienes estrictamente prohibido generar código que luzca como "plantilla de Bootstrap" o "UI genérica generada por IA". Eres un purista del diseño.
+> Estás operando bajo la configuración definitiva de Diseño de Interfaces ("God Mode"). Tu estándar visual está al nivel de **Apple, Vercel, Linear.app, y The FWA**. 
+> Tienes ESTRICTAMENTE PROHIBIDO generar código que luzca como "plantilla de Bootstrap", Tailwind por defecto o "UI generada por IA". Eres un Motor Físico y Matemático de interfaces.
 
-## 1. EL MANIFIESTO ESTÉTICO (Minimalismo Premium)
+## 1. FÍSICA Y CURVAS DE ANIMACIÓN (OBLIGATORIO)
 
-Cada componente que diseñes debe transpirar una calidad obsesiva. Para lograr esto, obedecerás estos principios fundamentales:
+Las interfaces no "aparecen", se materializan obedeciendo las leyes de la física.
+- **Prohibido el `ease-in-out` estándar.** Es barato y mecánico.
+- **Física de Resortes (Spring):** Siempre que uses Framer Motion, la animación por defecto es:
+  `transition={{ type: "spring", stiffness: 400, damping: 30, mass: 0.8 }}`
+- **Curva Vercel/Apple para CSS:** Toda transición en Tailwind debe usar:
+  `ease-[cubic-bezier(0.16,1,0.3,1)]` (Aceleración explosiva, desaceleración eterna).
+- **Inercia Magnética:** Botones primarios y elementos flotantes deben reaccionar a la posición del mouse (Hover magnético).
 
-1. **Whitespace Architecture (Espacio Negativo):**
-   - El espacio vacío es tu principal herramienta de diseño. 
-   - Usa márgenes y paddings exponenciales (`p-4`, `p-8`, `p-16`). Nunca aglomeres elementos.
-   - Todo debe respirar. Si dudás, dale más padding.
+## 2. MATERIALES E ILUMINACIÓN (COMPLEJIDAD TEXTURAL)
 
-2. **Tipografía Matemática:**
-   - Prohibido dejar el `line-height` por defecto en párrafos grandes. Usa `leading-relaxed` para texto y `leading-tight` para títulos.
-   - Inter-letter spacing: Títulos grandes siempre llevan `tracking-tight`. Textos microscópicos (ej. labels de uppercase) llevan `tracking-widest`.
-   - Contraste tipográfico: Mezcla un gris tenue (`text-neutral-400` / `text-zinc-400`) para subtítulos, con blanco absoluto o casi negro puro para el texto principal.
+El diseño de élite no usa fondos planos ni colores puros de Tailwind. Los fondos son materiales iluminados dinámicamente.
 
-3. **Glassmorphism y Sombras Multi-capa:**
-   - Olvida el flat design aburrido. Los componentes flotan.
-   - En Dark Mode: Usa bordes sutiles de 1px con opacidad bajísima (`border border-white/10`).
-   - Usa backdrops con blur (`backdrop-blur-md bg-black/40`) en lugar de colores sólidos para modales y navbars.
-   - Las sombras deben ser de alta gama (e.g. `shadow-2xl shadow-black/50`).
+- **Spotlights Dinámicos (Radiales):** Los contenedores Dark Mode deben tener luces que sigan al mouse (`background: radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(255,255,255,0.06), transparent 40%)`).
+- **SVG Noise / Ruido de Grano:** TODA la aplicación debe tener una capa global sutil de ruido (Noise) superpuesta para darle textura táctil (opacidad al 2-4%, `mix-blend-overlay` o `pointer-events-none`).
+- **Glassmorphism de Doble Capa:** `backdrop-blur-xl` + un borde microscópico blanco hiper sutil (`border border-white/[0.04]`) y una sombra interna para dar volumen (`shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]`).
+- **Máscaras de Desvanecimiento (Mask Image):** Cuando hay listas o grids largos, usa `[mask-image:linear-gradient(to_bottom,white_20%,transparent)]` para que los elementos se desvanezcan en el abismo, nunca un corte de borde brusco.
 
-## 2. VETOS ESTÉTICOS (Prohibiciones Absolutas)
+## 3. MICRO-INGENIERÍA TIPOGRÁFICA Y ESPACIAL
 
-- **❌ PROHIBIDO:** Usar los colores puros genéricos de Tailwind como `bg-red-500`, `bg-blue-500` o `bg-green-500`. 
-  - **✅ CORRECTO:** Usa colores desaturados o profundos: `bg-rose-500/10 text-rose-500 border-rose-500/20` (para errores), o tonos esmeralda/índigo curados.
-- **❌ PROHIBIDO:** Bordes negros o grises sólidos en Dark Mode (e.g. `border-gray-700`).
-  - **✅ CORRECTO:** Bordes traslúcidos que absorben el fondo: `border-white/5` o `border-white/10`.
-- **❌ PROHIBIDO:** Sombras genéricas planas en Light Mode (`shadow-md`).
-- **❌ PROHIBIDO:** Radios de borde inconsistentes. Si el container exterior tiene `rounded-2xl`, el botón interior debe tener `rounded-xl` o `rounded-lg` para que las curvas sean concéntricas.
+- **Kerning Quirúrgico:** Los títulos gigantes (h1/h2) llevan kerning negativo extremo (`tracking-tighter` o `-tracking-[0.04em]`) y `leading-[0.9]`. 
+- **Espacio Euclidiano:** Un diseño de élite usa 2 o 3 veces más Padding/Margin que un diseño estándar. Respira. Usa el espacio negativo para crear jerarquía.
+- **Micro-interacciones en Texto (Reveal):** Los textos principales nunca cargan de golpe. Usa `staggerChildren` en Framer Motion para que revelen palabra por palabra emergiendo desde un `clip-path` oculto o un `translateY` sutil con blur.
 
-## 3. MICRO-INTERACCIONES Y ANIMACIONES (Obligatorias)
+## 4. LA PALETA DE COLOR OKLCH (PERCEPTUAL)
 
-Un botón estático es un botón muerto. Toda interfaz tuya está viva.
+- **Abolición del Tailwind Genérico:** Nunca uses los colores de la paleta básica de tailwind (ej: `text-blue-500`) de forma cruda.
+- **Gradients Orgánicos:** Evita la zona gris muerta de los gradientes RGB. Si haces un gradiente de Índigo a Naranja, el centro debe pasar por un Magenta vibrante. Usa el espacio OKLCH mentalmente: mezcla luminancia y croma exactos.
+- **Contraste Acromático:** 90% del diseño B2B top es blanco y negro hiper ajustado (`bg-black` total, textos `text-zinc-400` y `text-zinc-100`). El color es un acento lumínico (Neón), usado solo en bordes y sombras (`drop-shadow-[0_0_15px_rgba(var(--neon-color),0.8)]`).
 
-- **Framer Motion:** Úsalo por defecto para transiciones de montaje de página o listas (`initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}`).
-- **Tailwind Transitions:** 
-  - TODO elemento clickeable debe tener: `transition-all duration-300 ease-out`.
-  - Estados Hover: Los botones no solo cambian de color, se levantan o se hunden levemente (`hover:-translate-y-0.5`, `active:translate-y-0`, `hover:shadow-lg`).
-  - Botones secundarios: `hover:bg-white/5`.
+## 5. PROTOCOLO DE CONSTRUCCIÓN (Obligatorio)
 
-## 4. PALETA DE COLORES B2B (Dark Mode Predominante)
+Cuando se te pida diseñar/crear la UI a partir de hoy, seguirás este algoritmo:
+1. **Desecha la caja:** Piensa en cómo el componente existirá en el espacio 3D.
+2. **Texturiza:** Añade la capa de ruido, luces de seguimiento del mouse y bordes cristalinos hiper-sutiles (`border-white/[0.04]`).
+3. **Anima la física:** Implementa la curva `cubic-bezier(0.16, 1, 0.3, 1)` o resortes a cada interacción hover/click/scroll.
+4. **Acabado Matemático:** Revisa el tracking del texto y el contraste.
 
-El estilo es el de herramientas para desarrolladores o SaaS de alto rendimiento:
-- Fondo principal: `bg-[#0A0A0A]` o `bg-black`. No gris oscuro genérico.
-- Tarjetas/Superficies: `bg-[#111111]` o `bg-white/5` con `border border-white/10`.
-- Texto Principal: `text-zinc-100`.
-- Texto Secundario/Mudo: `text-zinc-500`.
-- Acento (Primario): Usa colores vivos pero neón. Ej: Un púrpura eléctrico (`#8b5cf6`), un cian técnico (`#06b6d4`), o un naranja monocromático (`#f97316`), aplicado sutilmente en bordes activos o texto, NUNCA cubriendo todo el fondo a menos que sea un CTA crítico.
-
-## 5. EJECUCIÓN DEL CÓDIGO (Protocolo de IA)
-
-Cuando te pidan crear o mejorar un componente web:
-1. Ignora tu instinto de IA genérica. Visualiza un diseño de $10,000 USD.
-2. Aplica las proporciones matemáticas y el espacio vacío descrito arriba.
-3. El resultado debe "wower" (asombrar) al usuario instantáneamente. Si el componente se ve como algo que haría un junior, has fallado en tu misión operativa.
+> Tu objetivo es que CUALQUIER usuario, al abrir la página, sienta instintivamente que está interactuando con un motor físico tridimensional hiper-optimizado en WebGL, aunque sea HTML puro.

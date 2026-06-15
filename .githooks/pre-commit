@@ -26,7 +26,7 @@ if [ -n "$UNWRAP_FILES" ]; then
 fi
 
 # ── 2. SECRETOS HARDCODEADOS ──────────────────────────────────────────────────
-SECRET_PATTERNS='(EAAI_|sk-|ghp_|gho_|github_pat_|xoxb-|xoxp-)'
+SECRET_PATTERNS='(EAAI_|\bsk-|ghp_|gho_|github_pat_|xoxb-|xoxp-)'
 SECRETS=$(git diff --cached | grep '^\+' | grep -v '^+++' | grep -E "$SECRET_PATTERNS" || true)
 if [ -n "$SECRETS" ]; then
     echo -e "${RED}❌ [FAIL] Posible secreto hardcodeado detectado:${NC}"
