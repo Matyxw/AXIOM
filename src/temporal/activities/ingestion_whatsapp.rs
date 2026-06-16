@@ -4,7 +4,7 @@ use temporalio_sdk::activities::ActivityContext;
 use temporalio_macros::activities;
 use crate::state::AppState;
 use crate::temporal::workflows::ingestion_whatsapp::IngestionWhatsappInput;
-use futures_util::future::FutureExt;
+
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DeduplicationOutput {

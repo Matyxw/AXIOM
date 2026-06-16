@@ -1,7 +1,7 @@
 ---
 trigger: always_on
 description: >
-  Contrato operativo APEX. Stack: Rust+Axum+Tokio+Temporal.io | SurrealDB+TigerBeetle | Next.js 16+Tailwind 4 | Cloudflare ZT+Authelia+Infisical | Oracle Cloud+Coolify+Nix.
+  Contrato operativo APEX. APEX STACK: SOBERANÍA HÍBRIDA (COSTO $0 — DISPONIBILIDAD 24/7). I. NÚCLEO: Rust, Tokio, Temporal.io, Groq API, Nix. II. DATOS: SurrealDB, RocksDB, TigerBeetle, Sui. III. FRONTEND: Next.js 16, Tailwind 4, Aceternity, GSAP. IV. SEGURIDAD: Cloudflare ZT, Passkeys, Infisical. V. INFRA: Oracle Cloud, Coolify, Docker, Terraform.
 ---
 
 # APEX RULES v2.0

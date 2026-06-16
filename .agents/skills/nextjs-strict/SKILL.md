@@ -110,8 +110,9 @@ extraerla a un subcomponente `'use client'` hoja y mantener el padre como servid
 
 ## 6. Stack Visual AXIOM — No Negociable
 
-- **CSS:** Tailwind CSS v4 (nuevo motor basado en Vite, sin `tailwind.config.js`)
-- **Animaciones:** Framer Motion para transiciones de componentes, GSAP para animaciones complejas de canvas/SVG
-- **Componentes:** Aceternity UI como base — customizar con Tailwind, no reemplazar con otras librerías
-- **Tipografía:** Inter (variable font) cargada con `next/font/google`
+- **Framework:** Next.js 16 (React 19)
+- **Estilos:** Tailwind CSS 4.0
+- **Tipografía:** Geist Mono
+- **Componentes:** Aceternity UI + Magic UI
+- **Animaciones:** Framer Motion + GSAP
 - **PROHIBIDO:** Material UI, Chakra UI, Ant Design, Bootstrap — rompen el control granular del diseño
