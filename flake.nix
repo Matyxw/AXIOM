@@ -51,6 +51,7 @@
           nodejs_22      # Entorno de ejecución para Frontend (Next.js)
           nil            # Nix Language Server
           direnv         # Activación automática del entorno Nix en el shell
+          protobuf       # Protobuf compiler para compilar temporalio-protos
         ];
 
         buildInputs = with pkgs; [
@@ -87,6 +88,10 @@
           OPENSSL_DIR    = "${pkgs.openssl.dev}";
           OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
           OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
+
+          # Protoc: requerido para compilar temporalio-protos
+          PROTOC = "${pkgs.protobuf}/bin/protoc";
+          PROTOC_INCLUDE = "${pkgs.protobuf}/include";
 
           # RocksDB: usar la versión de Nix en lugar de compilar desde fuentes
           # Esto acelera drásticamente el primer `cargo build`

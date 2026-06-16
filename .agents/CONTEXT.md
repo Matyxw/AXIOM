@@ -1,7 +1,7 @@
 # AXIOM — Contexto Vivo del Proyecto
 > Este archivo es la fuente de verdad para el agente al inicio de cada sesión.
 > Actualizado automáticamente por `/sync-obsidian`. NO editar manualmente.
-> Última actualización: 2026-06-15
+> Última actualización: 2026-06-16
 
 ---
 
@@ -11,8 +11,8 @@
 - **Webhook Handler** (`src/handlers/mod.rs`): Recibe eventos de Meta, verifica HMAC-SHA256 con `subtle::ConstantTimeEq`, despacha al spawn. Retorna 200 OK antes de procesar.
 - **WhatsApp Egress** (`src/whatsapp.rs`): Envío de mensajes a Graph API con timeout y manejo de errores con `thiserror`.
 - **AppState** (`src/state.rs`): Pool HTTP (`reqwest::Client`), SurrealDB (`Surreal<Client>`), tenant cache (`RwLock<HashMap>`), tokens WA. `temporal_client` comentado.
-- **Landing Page** (`frontend/src/app/(public)/page.tsx`): B2B premium, simulador táctico, animaciones. Producción-ready.
-- **Auth Proxy** (`frontend/src/proxy.ts`): Zero Trust con Authelia/Cloudflare — extrae `x-axiom-tenant-id` de headers.
+- **Landing Page B2B** (`frontend/src/app/(public)/page.tsx` y `frontend/src/components/`): WebGL interactivo, módulos psicológicos (Calculadora de Aversión, Flujo de Datos, Terminal de Objeciones), E2E QA con Playwright. Producción-ready.
+- **Edge Middleware** (`frontend/src/proxy.ts`): Inyecta `x-user-persona` analizando el User-Agent para personalización en el Edge.
 - **Dashboard scaffold** (`frontend/src/app/(dashboard)/`): Layout + páginas de WhatsApp. Sin datos reales.
 
 ### ⚠️ Módulos ESTRUCTURALES (código escrito, compilación bloqueada)

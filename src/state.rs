@@ -10,7 +10,7 @@ pub struct AppState {
     pub tenant_cache: Arc<tokio::sync::RwLock<std::collections::HashMap<String, String>>>,
     /// Pool de conexiones HTTP reutilizable — NUNCA crear reqwest::Client::new() fuera de AppState.
     pub http_client: reqwest::Client,
-    // pub temporal_client: Arc<temporal_client::Client>, // Añadir al integrar Temporal SDK
+    pub temporal_client: Arc<temporalio_client::Client>,
 }
 
 pub async fn load_tenants_cache(

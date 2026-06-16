@@ -17,8 +17,8 @@ use crate::models;
 pub fn app_router(state: Arc<AppState>) -> Router {
     Router::new()
         .route("/health", get(health_handler))
-        .route("/webhook", get(webhook_verify_handler))
-        .route("/webhook", post(webhook_message_handler))
+        .route("/api/webhooks/whatsapp", get(webhook_verify_handler))
+        .route("/api/webhooks/whatsapp", post(webhook_message_handler))
         .fallback(fallback_handler)
         .with_state(state)
 }
@@ -54,74 +54,77 @@ async fn webhook_message_handler(
         return StatusCode::UNAUTHORIZED;
     }
 
-    let parsed_json = serde_json::from_slice::<serde_json::Value>(&body_bytes).ok();
-    
-    let _wamid: Option<String> = parsed_json.as_ref()
-        .and_then(|v| {
-            v.get("entry")?
-                .get(0)?
-                .get("changes")?
-                .get(0)?
-                .get("value")?
-                .get("messages")?
-                .get(0)?
-                .get("id")
-                .and_then(|id| id.as_str())
-                .map(str::to_owned)
-        });
-
-    let phone_number_id: Option<String> = parsed_json.as_ref()
-        .and_then(|v| {
-            v.get("entry")?
-                .get(0)?
-                .get("changes")?
-                .get(0)?
-                .get("value")?
-                .get("metadata")?
-                .get("phone_number_id")
-                .and_then(|id| id.as_str())
-                .map(str::to_owned)
-        });
-
-    let tenant_id = {
-        let cache = state.tenant_cache.read().await;
-        if let Some(pid) = &phone_number_id {
-            cache.get(pid).cloned()
-        } else {
-            None
-        }
-    };
-
-    let _tenant_id = match tenant_id {
-        Some(t) => t,
-        None => {
-            warn!(
-                phone_id = ?phone_number_id,
-                "[webhook_message] No se resolvió tenant_id en memoria. Evento descartado temporalmente."
-            );
-            return StatusCode::OK;
-        }
-    };
-
-    // La deduplicación está delegada a la Actividad de Temporal.
-    // Esto garantiza que el webhook retorne 200 OK a Meta en < 20ms, evitando baneos por timeout.
-    tracing::info!("[webhook_message] Firma verificada. Despachando procesamiento async.");
-
     let _state_clone = Arc::clone(&state);
     let body_clone = body_bytes.clone();
 
     tokio::spawn(async move {
+        let parsed_json = serde_json::from_slice::<serde_json::Value>(&body_clone).ok();
+        let phone_number_id: Option<String> = parsed_json.as_ref()
+            .and_then(|v| {
+                v.get("entry")?
+                    .get(0)?
+                    .get("changes")?
+                    .get(0)?
+                    .get("value")?
+                    .get("metadata")?
+                    .get("phone_number_id")
+                    .and_then(|id| id.as_str())
+                    .map(str::to_owned)
+            });
+
+        let tenant_id = {
+            let cache = _state_clone.tenant_cache.read().await;
+            if let Some(pid) = &phone_number_id {
+                cache.get(pid).cloned()
+            } else {
+                None
+            }
+        };
+
+        let _tenant_id = match tenant_id {
+            Some(t) => t,
+            None => {
+                warn!(
+                    phone_id = ?phone_number_id,
+                    "[webhook_message] No se resolvió tenant_id en memoria. Evento descartado temporalmente."
+                );
+                return;
+            }
+        };
+
         match serde_json::from_slice::<models::WebhookPayload>(&body_clone) {
             Ok(payload) => {
                 for entry in payload.entry {
                     for change in entry.changes {
                         for msg in change.value.messages {
                             if msg.msg_type == "text" {
-                                if let Some(_text) = msg.text {
-                                    // FIX: Aquí llamaremos al SDK real de Temporal (client.start_workflow)
-                                    // usando IngestionWhatsappInput
-                                    // Por ahora registramos el enrutamiento.
-                                    info!("[webhook_message] Workflow IngestionWhatsapp encolado para WAMID: {}", msg.id);
+                                if let Some(text) = msg.text {
+                                    let input = crate::temporal::workflows::ingestion_whatsapp::IngestionWhatsappInput {
+                                        tenant_id: _tenant_id.clone(),
+                                        wamid: msg.id.clone(),
+                                        from_phone: msg.from.clone(),
+                                        body: text.body.clone(),
+                                    };
+                                    let wf_id = format!("wamid-{}", msg.id);
+                                    let options = temporalio_client::WorkflowStartOptions::new(
+                                        "axiom-main".to_string(), // task_queue
+                                        wf_id.clone()             // workflow_id
+                                    ).build();
+                                    // Inicia el workflow
+                                    match _state_clone.temporal_client.start_workflow(
+                                        crate::temporal::workflows::ingestion_whatsapp::IngestionWhatsappWorkflow::run,
+                                        input,
+                                        options,
+                                    )
+                                    .await
+                                    {
+                                        Ok(handle) => {
+                                            info!("[webhook_message] Workflow Temporal iniciado con ID: {:?}", handle.run_id());
+                                        }
+                                        Err(e) => {
+                                            warn!("[webhook_message] Fallo al iniciar Workflow Temporal: {:?}", e);
+                                        }
+                                    }
                                 }
                             }
                         }

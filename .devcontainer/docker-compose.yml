@@ -13,3 +13,11 @@ services:
     command: start --log info --user root --pass root memory
     ports:
       - "8000:8000"
+
+  temporal:
+    # Servidor de desarrollo in-memory para Temporal.
+    image: temporalio/admin-tools:1.23.1
+    command: temporal server start-dev --ip 0.0.0.0
+    ports:
+      - "7233:7233" # gRPC para los Workers y Webhooks
+      - "8233:8233" # UI Web para debuggear Workflows

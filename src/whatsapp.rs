@@ -48,12 +48,18 @@ pub async fn send_whatsapp_message(
     .map_err(|e| crate::error::AppError::WhatsApp(e.to_string()))?;
 
     let status = response.status();
+    let masked_number = if to_number.len() >= 4 {
+        format!("{}****", &to_number[..to_number.len() - 4])
+    } else {
+        "****".to_string()
+    };
+
     if status.is_success() {
-        tracing::info!(to = %to_number, http = %status, "[egress] mensaje enviado");
+        tracing::info!(to = %masked_number, http = %status, "[egress] mensaje enviado");
         Ok(())
     } else {
         let error_body = response.text().await.unwrap_or_else(|_| "<sin cuerpo>".to_string());
-        tracing::error!(to = %to_number, http = %status, body = %error_body, "[egress] error Meta API");
+        tracing::error!(to = %masked_number, http = %status, body = %error_body, "[egress] error Meta API");
         Err(crate::error::AppError::WhatsApp(format!("Meta HTTP {status}: {error_body}")))
     }
 }

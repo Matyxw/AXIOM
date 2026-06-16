@@ -24,5 +24,13 @@ tracing-subscriber = { version = "0.3",  features = ["env-filter"] }
 thiserror          = "2"
 config             = "0.14"
 dotenvy            = "0.15"
-# temporal-sdk = { git = "..." }  # Añadir aquí cuando el SDK esté estable y activar feature 'temporal'
+temporalio-client = { git = "https://github.com/temporalio/sdk-rust", branch = "main" }
+temporalio-sdk = { git = "https://github.com/temporalio/sdk-rust", branch = "main" }
+temporalio-sdk-core = { git = "https://github.com/temporalio/sdk-rust", branch = "main" }
+temporalio-macros = { git = "https://github.com/temporalio/sdk-rust", branch = "main" }
+temporalio-workflow = { git = "https://github.com/temporalio/sdk-rust", branch = "main" }
+temporalio-common = { git = "https://github.com/temporalio/sdk-rust", branch = "main" }
+futures-util = "0.3"
 uuid               = { version = "1.0", features = ["v4", "fast-rng"] }
+anyhow = "1.0.102"
+futures = "0.3.32"

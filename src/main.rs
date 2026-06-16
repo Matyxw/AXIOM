@@ -34,6 +34,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tracing::error!("[main] Error al cargar caché de tenants (el webhook descartará mensajes): {}", e);
     }
 
+    let temporal_target = std::env::var("TEMPORAL_ADDRESS").unwrap_or_else(|_| "http://localhost:7233".to_string());
+    let url: reqwest::Url = temporal_target.parse().expect("URL de Temporal inválida");
+    let conn_opts = temporalio_client::ConnectionOptions::new(url).build();
+    let temporal_connection = temporalio_client::Connection::connect(conn_opts).await.expect("Error al conectar a Temporal");
+    
+    let client_opts = temporalio_client::ClientOptions::new("default".to_string()).build();
+    let temporal_client = Arc::new(temporalio_client::Client::new(temporal_connection, client_opts).expect("Fallo al construir el cliente"));
+    info!("[main] Conexión a Temporal Server establecida exitosamente.");
+
     let state = Arc::new(AppState {
         wa_app_secret: Arc::new(config.wa_app_secret),
         wa_access_token: Arc::new(config.wa_access_token),
@@ -44,11 +53,45 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         http_client: reqwest::Client::builder()
             .timeout(std::time::Duration::from_secs(10))
             .build()
-            .expect("fallo al construir reqwest::Client"), // SAFETY: solo falla si TLS no compila
+            .expect("fallo al construir reqwest::Client"),
+        temporal_client: temporal_client.clone(),
     });
 
-    // TODO: Init Temporal Worker here
-    info!("[main] Temporal Worker config goes here");
+    let activities = crate::temporal::activities::ingestion_whatsapp::IngestionActivities {
+        state: state.clone(),
+    };
+
+    let worker_opts = temporalio_sdk::WorkerOptions::new("axiom-main".to_string()).build();
+    let runtime_opts = temporalio_sdk_core::RuntimeOptions::default();
+    
+    let tc_clone = temporal_client.clone();
+    
+    std::thread::spawn(move || {
+        // SAFETY: Fallar aquí significa que el OS no puede crear threads para el worker
+        let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().expect("Fallo al crear tokio runtime");
+        rt.block_on(async {
+            tokio::task::LocalSet::new().run_until(async {
+                let runtime = temporalio_sdk_core::CoreRuntime::new_assume_tokio(runtime_opts)
+                    .expect("Fallo al crear CoreRuntime");
+                
+                let mut worker = temporalio_sdk::Worker::new(
+                    &runtime,
+                    (*tc_clone).clone(),
+                    worker_opts,
+                )
+                .expect("Fallo al crear Temporal Worker");
+                
+                worker.register_workflow::<crate::temporal::workflows::ingestion_whatsapp::IngestionWhatsappWorkflow>()
+                .expect("Fallo al registrar IngestionWhatsappWorkflow")
+                .register_activities(activities);
+
+                info!("[main] Iniciando Temporal Worker para task_queue: axiom-main");
+                if let Err(e) = worker.run().await {
+                    tracing::error!("Error en Temporal Worker: {:?}", e);
+                }
+            }).await;
+        });
+    });
 
     let app = handlers::app_router(Arc::clone(&state));
 

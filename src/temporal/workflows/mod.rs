@@ -20,5 +20,4 @@ pub async fn message_processing_workflow(
     Ok(())
 }
 
-#[cfg(feature = "temporal")]
 pub mod ingestion_whatsapp;
