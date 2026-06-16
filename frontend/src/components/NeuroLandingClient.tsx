@@ -9,6 +9,10 @@ const ParticleBackground = dynamic(() => import('./ParticleBackground'), {
   ssr: false,
 });
 
+import AsymmetricCalculator from './AsymmetricCalculator';
+import DataFlowInteractive from './DataFlowInteractive';
+import ObjectionTerminal from './ObjectionTerminal';
+
 interface NeuroLandingProps {
   persona: string;
 }
@@ -229,6 +233,12 @@ export default function NeuroLandingClient({ persona }: NeuroLandingProps) {
             </div>
           </motion.div>
         </div>
+
+        {/* MÓDULOS PSICOLÓGICOS (Fase 2) */}
+        <AsymmetricCalculator />
+        <DataFlowInteractive />
+        <ObjectionTerminal />
+        
       </main>
     </div>
   );

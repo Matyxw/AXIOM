@@ -61,6 +61,7 @@
           zstd           # Compresión Zstandard — dependencia de RocksDB
           bzip2          # Compresión BZip2 — dependencia de RocksDB
           lz4            # Compresión LZ4 — dependencia de RocksDB
+          chromium       # Navegador E2E nativo de Nix
         ];
 
       in
@@ -101,6 +102,9 @@
           RUST_LOG = "debug";
 
           shellHook = ''
+            export PLAYWRIGHT_BROWSERS_PATH=0
+            export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+            export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${pkgs.chromium}/bin/chromium
             echo ""
             echo "╔═══════════════════════════════════════════════════════╗"
             echo "║   AXIOM — Entorno Nix Full-Stack Activado             ║"
